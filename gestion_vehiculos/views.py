@@ -2,9 +2,11 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, FormView
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import UsuarioRegistroForm, UsuarioLoginForm
+from django.contrib.auth.decorators import user_passes_test
+from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm
 from .models import Usuario
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.mail import send_mail
 
 def index(request):
     return render(request, 'gestion_vehiculos/index.html')
@@ -13,12 +15,11 @@ class UsuarioRegistroView(CreateView):
     model = Usuario
     form_class = UsuarioRegistroForm
     template_name = 'gestion_vehiculos/registro.html'
-    success_url = reverse_lazy('login')
+    success_url = '/'
 
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return super().form_valid(form)
+    def get_initial(self):
+        token = self.request.GET.get('token')
+        return {'token': token}
 
 class UsuarioLoginView(LoginView):
     form_class = UsuarioLoginForm
@@ -29,5 +30,20 @@ class UsuarioLogoutView(LogoutView):
     next_page = reverse_lazy('login')
 
 
-
+@user_passes_test(lambda u: u.is_superuser or u.rol == 'Admin')
+def enviar_invitacion(request):
+    if request.method == 'POST':
+        form = InvitacionForm(request.POST)
+        if form.is_valid():
+            invitacion = form.save()
+            send_mail(
+                'Invitación para unirte al sistema',
+                f'Únete usando el siguiente enlace: http://127.0.0.1:8000/registro/?token={invitacion.token}',
+                'admin@example.com',
+                [invitacion.email],
+            )
+            return redirect('invitacion_enviada')
+    else:
+        form = InvitacionForm()
+    return render(request, 'gestion_vehiculos/enviar_invitacion.html', {'form': form})
 # Create your views here.
