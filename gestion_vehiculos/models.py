@@ -6,9 +6,12 @@ class Regimiento(models.Model):
     nombre = models.CharField(max_length=100)
     ubicacion = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.nombre
+
 class Usuario(AbstractUser):
-    regimiento = models.ForeignKey(Regimiento, on_delete=models.SET_NULL, null=True, blank=True)
-    rol = models.CharField(max_length=100, choices=[('Super', 'Superusuario'), ('Admin', 'Administrador'), ('Jefe', 'Jefe de Escuadrón'), ('Seccion', 'Jefe de Sección')])
+    regimiento = models.ForeignKey('Regimiento', on_delete=models.CASCADE, null=True, blank=True)
+    rol = models.CharField(max_length=100, choices=[('Administrador', 'Administrador'), ('Jefe', 'Jefe de Escuadrón'), ('Sección', 'Jefe de Sección')], default='Administrador')
 
     def __str__(self):
         return f"{self.username} ({self.rol})"

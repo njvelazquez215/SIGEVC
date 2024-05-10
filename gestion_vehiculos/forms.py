@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Usuario, Invitacion
+from .models import Usuario, Invitacion, Regimiento
 
 class UsuarioRegistroForm(UserCreationForm):
     token = forms.UUIDField()
@@ -36,4 +36,10 @@ class UsuarioLoginForm(AuthenticationForm):
 class InvitacionForm(forms.ModelForm):
     class Meta:
         model = Invitacion
-        fields = ['email', 'regimiento', 'rol']
+        fields = ['email', 'rol']
+
+
+class RegimientoForm(forms.ModelForm):
+    class Meta:
+        model = Regimiento
+        fields = ['nombre', 'ubicacion']

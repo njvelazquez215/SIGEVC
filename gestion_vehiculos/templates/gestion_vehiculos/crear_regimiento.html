@@ -2,15 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Enviar Invitación</title>
+    <title>Crear Regimiento</title>
 </head>
 <body>
-    <h2>Enviar Invitación</h2>
+    <h2>Crear Nuevo Regimiento</h2>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Enviar</button>
+        <button type="submit">Crear</button>
     </form>
 </body>
 </html>
-
