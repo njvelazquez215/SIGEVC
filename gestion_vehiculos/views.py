@@ -46,10 +46,21 @@ class PerfilAdministradorView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['invitaciones'] = Invitacion.objects.filter(regimiento=self.request.user.regimiento, usado=False)
+        context['invitaciones'] = Invitacion.objects.filter(regimiento=self.request.user.regimiento)
         return context
 
     def post(self, request, *args, **kwargs):
+        if 'cancelar_invitacion' in request.POST:
+            invitacion = Invitacion.objects.get(id=request.POST['invitacion_id'])
+            invitacion.estado = 'cancelada'
+            invitacion.save()
+            return super().form_valid(form=None)  # Redirige a la misma página
+
+        if 'reenviar_invitacion' in request.POST:
+            invitacion = Invitacion.objects.get(id=request.POST['invitacion_id'])
+            self.enviar_invitacion_email(invitacion)
+            return super().form_valid(form=None)  # Redirige a la misma página
+
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
@@ -59,7 +70,12 @@ class PerfilAdministradorView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         invitacion = form.save(commit=False)
         invitacion.regimiento = self.request.user.regimiento
+        invitacion.estado = 'pendiente'  # Asegúrate de que el modelo de Invitacion tenga un campo 'estado'
         invitacion.save()
+        self.enviar_invitacion_email(invitacion)
+        return super().form_valid(form)
+
+    def enviar_invitacion_email(self, invitacion):
         send_mail(
             'Invitación para unirte al regimiento',
             f'Por favor, utiliza este token para registrarte: {invitacion.token}',
@@ -67,4 +83,3 @@ class PerfilAdministradorView(LoginRequiredMixin, FormView):
             [invitacion.email],
             fail_silently=False,
         )
-        return super().form_valid(form)

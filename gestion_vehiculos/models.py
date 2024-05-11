@@ -17,6 +17,11 @@ class Usuario(AbstractUser):
         return f"{self.username} ({self.rol})"
 
 class Invitacion(models.Model):
+    ESTADOS = (
+        ('enviada', 'Enviada'),
+        ('cancelada', 'Cancelada'),
+        ('pendiente', 'Pendiente'),
+    )
     email = models.EmailField(unique=True)
     regimiento = models.ForeignKey('Regimiento', on_delete=models.CASCADE)
     rol = models.CharField(max_length=100, choices=[
@@ -29,6 +34,7 @@ class Invitacion(models.Model):
     ])
     token = models.UUIDField(default=uuid.uuid4, unique=True)
     usado = models.BooleanField(default=False)
+    estado = models.CharField(max_length=10, choices=ESTADOS, default='pendiente')
 
     def __str__(self):
         return f"{self.email} ({self.rol})"
