@@ -19,7 +19,14 @@ class Usuario(AbstractUser):
 class Invitacion(models.Model):
     email = models.EmailField(unique=True)
     regimiento = models.ForeignKey('Regimiento', on_delete=models.CASCADE)
-    rol = models.CharField(max_length=100, choices=[('Admin', 'Administrador'), ('Jefe', 'Jefe de Escuadrón'), ('Seccion', 'Jefe de Sección')])
+    rol = models.CharField(max_length=100, choices=[
+        ('Jefe de Regimiento', 'Jefe de Regimiento'),
+        ('2do Jefe de Regimiento', '2do Jefe de Regimiento'),
+        ('Oficial de Operaciones', 'Oficial de Operaciones'),
+        ('Oficial de Materiales', 'Oficial de Materiales'),
+        ('Jefe de Escuadrón', 'Jefe de Escuadrón'),
+        ('Jefe de Sección', 'Jefe de Sección')
+    ])
     token = models.UUIDField(default=uuid.uuid4, unique=True)
     usado = models.BooleanField(default=False)
 

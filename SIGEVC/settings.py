@@ -127,6 +127,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'gestion_vehiculos.Usuario'
 
-LOGIN_REDIRECT_URL = '/enviar_invitacion/'
+LOGIN_REDIRECT_URL = '/perfil/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nicoj.velazquez@gmail.com'
+EMAIL_HOST_PASSWORD = 'wggq aseb lvwn yxoi'
+DEFAULT_FROM_EMAIL = 'nicoj.velazquez@gmail.com'
+
+
 
 

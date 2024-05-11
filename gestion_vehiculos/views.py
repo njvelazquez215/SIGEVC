@@ -1,15 +1,14 @@
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, FormView
-from django.contrib.auth import login
+from django.views.generic import CreateView, TemplateView, FormView, RedirectView
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm, RegimientoForm
-from .models import Usuario, Regimiento
-from django.shortcuts import render, redirect
+from .models import Usuario, Regimiento, Invitacion
 from django.core.mail import send_mail
+from django.conf import settings
 
-def index(request):
-    return render(request, 'gestion_vehiculos/index.html')
+class IndexView(TemplateView):
+    template_name = 'gestion_vehiculos/index.html'
 
 class UsuarioRegistroView(CreateView):
     model = Usuario
@@ -28,46 +27,44 @@ class UsuarioLoginView(LoginView):
 class UsuarioLogoutView(LogoutView):
     next_page = reverse_lazy('login')
 
+class CrearRegimientoView(UserPassesTestMixin, FormView):
+    form_class = RegimientoForm
+    template_name = 'gestion_vehiculos/crear_regimiento.html'
+    success_url = reverse_lazy('index')
 
-@user_passes_test(lambda u: u.is_authenticated and u.rol == 'Administrador')
-def enviar_invitacion(request):
-    regimiento = request.user.regimiento  # Asumimos que el usuario tiene un campo `regimiento`.
-    if request.method == 'POST':
-        form = InvitacionForm(request.POST)
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+class PerfilAdministradorView(LoginRequiredMixin, FormView):
+    template_name = 'gestion_vehiculos/perfil_administrador.html'
+    form_class = InvitacionForm
+    success_url = reverse_lazy('perfil_administrador')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['invitaciones'] = Invitacion.objects.filter(regimiento=self.request.user.regimiento, usado=False)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
         if form.is_valid():
-            invitacion = form.save(commit=False)
-            invitacion.regimiento = regimiento
-            invitacion.save()
-            # Envía correo electrónico con el token de invitación (puedes personalizar el contenido):
-            send_mail(
-                'Invitación para unirte al regimiento',
-                f'Únete usando el siguiente enlace: http://127.0.0.1:8000/registro/?token={invitacion.token}',
-                'admin@example.com',
-                [invitacion.email]
-            )
-            return redirect('invitacion_enviada')
-    else:
-        form = InvitacionForm()
-    return render(request, 'gestion_vehiculos/enviar_invitacion.html')
-# Create your views here.
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
-@user_passes_test(lambda u: u.is_superuser)
-def crear_regimiento(request):
-    if request.method == 'POST':
-        form = RegimientoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
-    else:
-        form = RegimientoForm()
-    return render(request, 'gestion_vehiculos/crear_regimiento.html', {'form': form})
-
-
-@login_required
-def perfil_administrador(request):
-    # Verificar que el usuario tiene el rol correcto
-    if request.user.rol != 'Administrador':
-        return redirect('index')  # Redirigir si no es administrador
-
-    # Proveer la lógica para el perfil del administrador
-    return render(request, 'gestion_vehiculos/perfil_administrador.html')
+    def form_valid(self, form):
+        invitacion = form.save(commit=False)
+        invitacion.regimiento = self.request.user.regimiento
+        invitacion.save()
+        send_mail(
+            'Invitación para unirte al regimiento',
+            f'Por favor, utiliza este token para registrarte: {invitacion.token}',
+            settings.DEFAULT_FROM_EMAIL,
+            [invitacion.email],
+            fail_silently=False,
+        )
+        return super().form_valid(form)

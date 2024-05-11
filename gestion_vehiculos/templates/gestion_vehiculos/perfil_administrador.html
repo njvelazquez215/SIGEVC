@@ -1,12 +1,55 @@
-<!-- En templates/gestion_vehiculos/perfil_administrador.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Perfil del Administrador</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+        header, footer {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Bienvenido al Perfil del Administrador</h2>
-    <p>Aquí podrás gestionar las invitaciones para tu regimiento.</p>
+    <header>
+        <h1>Administrador de Regimientos</h1>
+    </header>
+    <main>
+        <h2>Enviar Invitaciones</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Enviar Invitación</button>
+        </form>
+
+        <h2>Invitaciones Pendientes</h2>
+        <ul>
+            {% for invitacion in invitaciones %}
+                <li>{{ invitacion.email }} - Token: {{ invitacion.token }}</li>
+            {% empty %}
+                <li>No hay invitaciones pendientes.</li>
+            {% endfor %}
+        </ul>
+    </main>
+    <footer>
+        <p>Derechos reservados © 2024</p>
+    </footer>
 </body>
 </html>
