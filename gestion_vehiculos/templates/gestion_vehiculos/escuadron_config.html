@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración del Escuadrón</title>
+</head>
+<body>
+<h1>Configuración del Escuadrón: {{ escuadron.nombre }}</h1>
+<div>
+    <h2>Secciones</h2>
+    {% for seccion in secciones %}
+    <div>
+        <h3>Sección: {{ seccion.nombre }}</h3>
+        <p>Jefe de Sección: {{ seccion.jefe.username }}</p>
+        <ul>
+            {% for tanque in seccion.tanques.all %}
+            <li>{{ tanque.ni }} - {{ tanque.responsable }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+    <h2>Agregar Sección</h2>
+    <form method="post" action="{% url 'nombre_de_url_para_agregar_seccion' escuadron.id %}">
+        {% csrf_token %}
+        <input type="text" name="nombre_seccion" placeholder="Nombre de Sección" required>
+        <select name="jefe_seccion" required>
+            {% for jefe in posibles_jefes %}
+            <option value="{{ jefe.id }}">{{ jefe.username }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Agregar Sección</button>
+    </form>
+</div>
+<a href="{% url 'nombre_de_url_principal_escuadron' %}">Volver al Dashboard del Escuadrón</a>
+</body>
+</html>

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Usuario, Invitacion, Regimiento
+from .models import Usuario, Invitacion, Regimiento, Seccion
 
 class UsuarioRegistroForm(UserCreationForm):
     token = forms.UUIDField()
@@ -43,3 +43,9 @@ class RegimientoForm(forms.ModelForm):
     class Meta:
         model = Regimiento
         fields = ['nombre', 'ubicacion']
+
+
+class SeccionForm(forms.ModelForm):
+    class Meta:
+        model = Seccion
+        fields = ['nombre', 'jefe']  # Asegúrate de que el modelo Seccion tenga estos campos

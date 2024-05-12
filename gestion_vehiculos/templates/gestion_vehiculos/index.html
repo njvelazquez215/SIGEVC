@@ -2,15 +2,85 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Página Principal</title>
+    <title>Bienvenido a SIGEVC</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .bg {
+            /* Ajustar la imagen de fondo al tamaño completo de la pantalla */
+            background-image: url('/media/imagenes_blindados/portada.jpg');
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .login-form {
+            width: 50%; /* Ajustar esto si es necesario para obtener la mitad exacta de la pantalla */
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            box-sizing: border-box;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .form-container {
+            width: 300px;
+            margin: auto;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido a la Gestión de Vehículos Blindados</h1>
-    <nav>
-        <ul>
-            <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-            <li><a href="{% url 'registro' %}">Registrarse</a></li>
-        </ul>
-    </nav>
+    <div class="bg">
+        <div class="login-form">
+            <div class="form-container">
+                <h1>SIGEVC</h1>
+                <p>Bienvenido de nuevo! Por favor ingrese a su cuenta:</p>
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="username" placeholder="Usuario" required>
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                    <button type="submit">Ingresar</button>
+                    <a href="{% url 'registro' %}">Registrarse</a>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

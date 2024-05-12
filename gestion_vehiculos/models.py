@@ -38,3 +38,29 @@ class Invitacion(models.Model):
 
     def __str__(self):
         return f"{self.email} ({self.rol})"
+
+class Escuadron(models.Model):
+    regimiento = models.ForeignKey(Regimiento, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)
+    tipo = models.CharField(max_length=100)  # Ejemplo: "Escuadrón de Tanques A", "Escuadrón Comando y Servicios"
+
+    def __str__(self):
+        return f"{self.nombre} ({self.tipo})"
+
+class Seccion(models.Model):
+    escuadron = models.ForeignKey(Escuadron, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)  # Ejemplo: "1ra Sección de Tanques", "2da Sección de Tanques"
+    jefe = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True, related_name='jefe_seccion')
+
+    def __str__(self):
+        return self.nombre
+
+class Tanque(models.Model):
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    NI = models.CharField(max_length=100, unique=True)  # Número de Identificación del Tanque
+    estado = models.CharField(max_length=100, choices=[('En servicio', 'En servicio'), ('Servicio limitado', 'Servicio limitado'), ('Fuera de servicio', 'Fuera de servicio')])
+    responsable = models.CharField(max_length=100)  # Nombre del responsable del tanque
+
+    def __str__(self):
+        return f"{self.NI} - {self.estado}"
+

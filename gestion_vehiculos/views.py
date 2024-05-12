@@ -1,12 +1,12 @@
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, FormView, RedirectView, DeleteView
+from django.views.generic import CreateView, TemplateView, FormView, RedirectView, DeleteView, View
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm, RegimientoForm
-from .models import Usuario, Regimiento, Invitacion
+from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm, RegimientoForm, SeccionForm
+from .models import Usuario, Regimiento, Invitacion, Escuadron, Seccion, Tanque
 from django.core.mail import send_mail
 from django.conf import settings
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 
 class IndexView(TemplateView):
@@ -106,3 +106,56 @@ class UsuarioDeleteView(LoginRequiredMixin, DeleteView):
     model = Usuario
     success_url = reverse_lazy('perfil_administrador')
     template_name = 'gestion_vehiculos/usuario_confirm_delete.html'
+
+
+class EscuadronView(TemplateView):
+    template_name = 'escuadron_config.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        escuadron_id = self.kwargs.get('escuadron_id')
+        escuadron = Escuadron.objects.get(id=escuadron_id)
+        secciones = Seccion.objects.filter(escuadron=escuadron)
+
+        context['escuadron'] = escuadron
+        context['secciones'] = secciones
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Aquí iría la lógica para manejar la creación/edición de secciones y asignación de tanques
+        return redirect('nombre_de_url_para_ver_escuadron')
+
+class SeccionCreateView(View):
+    def get(self, request, *args, **kwargs):
+        form = SeccionForm()
+        return render(request, 'seccion_form.html', {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = SeccionForm(request.POST)
+        if form.is_valid():
+            nueva_seccion = form.save(commit=False)
+            nueva_seccion.escuadron = get_object_or_404(Escuadron, id=self.kwargs['escuadron_id'])
+            nueva_seccion.save()
+            return redirect('ver_escuadron', escuadron_id=nueva_seccion.escuadron.id)
+        return render(request, 'seccion_form.html', {'form': form})
+
+class SeccionUpdateView(View):
+    def get(self, request, pk, *args, **kwargs):
+        seccion = get_object_or_404(Seccion, pk=pk)
+        form = SeccionForm(instance=seccion)
+        return render(request, 'seccion_form.html', {'form': form})
+
+    def post(self, request, pk, *args, **kwargs):
+        seccion = get_object_or_404(Seccion, pk=pk)
+        form = SeccionForm(request.POST, instance=seccion)
+        if form.is_valid():
+            form.save()
+            return redirect('ver_escuadron', escuadron_id=seccion.escuadron.id)
+        return render(request, 'seccion_form.html', {'form': form})
+
+class SeccionDeleteView(View):
+    def get(self, request, pk, *args, **kwargs):
+        seccion = get_object_or_404(Seccion, pk=pk)
+        seccion.delete()
+        return redirect('ver_escuadron', escuadron_id=seccion.escuadron.id)
+
