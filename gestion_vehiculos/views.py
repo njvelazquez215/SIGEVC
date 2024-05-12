@@ -1,11 +1,13 @@
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, FormView, RedirectView
+from django.views.generic import CreateView, TemplateView, FormView, RedirectView, DeleteView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm, RegimientoForm
 from .models import Usuario, Regimiento, Invitacion
 from django.core.mail import send_mail
 from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
 class IndexView(TemplateView):
     template_name = 'gestion_vehiculos/index.html'
@@ -39,43 +41,55 @@ class CrearRegimientoView(UserPassesTestMixin, FormView):
         form.save()
         return super().form_valid(form)
 
-class PerfilAdministradorView(LoginRequiredMixin, FormView):
+class PerfilAdministradorView(UserPassesTestMixin, LoginRequiredMixin, FormView):
     template_name = 'gestion_vehiculos/perfil_administrador.html'
     form_class = InvitacionForm
     success_url = reverse_lazy('perfil_administrador')
 
+    def test_func(self):
+        return self.request.user.rol == 'Administrador'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['invitaciones'] = Invitacion.objects.filter(regimiento=self.request.user.regimiento)
+        context['usuarios'] = Usuario.objects.filter(regimiento=self.request.user.regimiento, is_active=True)
+        context['invitaciones'] = Invitacion.objects.filter(regimiento=self.request.user.regimiento, usado=False)
         return context
 
     def post(self, request, *args, **kwargs):
-        if 'cancelar_invitacion' in request.POST:
-            invitacion = Invitacion.objects.get(id=request.POST['invitacion_id'])
-            invitacion.estado = 'cancelada'
-            invitacion.save()
-            return super().form_valid(form=None)  # Redirige a la misma página
-
-        if 'reenviar_invitacion' in request.POST:
-            invitacion = Invitacion.objects.get(id=request.POST['invitacion_id'])
-            self.enviar_invitacion_email(invitacion)
-            return super().form_valid(form=None)  # Redirige a la misma página
-
         form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+        if 'reenviar' in request.POST:
+            invitacion_id = request.POST.get('reenviar')
+            invitacion = get_object_or_404(Invitacion, id=invitacion_id)
+            self.reenviar_invitacion(invitacion)
+        elif 'eliminar' in request.POST:
+            invitacion_id = request.POST.get('eliminar')
+            Invitacion.objects.filter(id=invitacion_id).delete()
+        elif form.is_valid():
+            email = form.cleaned_data['email']
+            invitacion = Invitacion.objects.filter(email=email, usado=False).first()
+            if invitacion:
+                # Si ya existe, reenviar la invitación existente
+                self.reenviar_invitacion(invitacion)
+                messages.info(request, "Invitación reenviada.")
+            else:
+                # Si no existe, crear y enviar nueva invitación
+                return self.form_valid(form)
+        return self.form_invalid(form)
 
     def form_valid(self, form):
         invitacion = form.save(commit=False)
         invitacion.regimiento = self.request.user.regimiento
-        invitacion.estado = 'pendiente'  # Asegúrate de que el modelo de Invitacion tenga un campo 'estado'
         invitacion.save()
-        self.enviar_invitacion_email(invitacion)
+        self.enviar_invitacion(invitacion)
+        messages.success(self.request, "Invitación enviada correctamente.")
         return super().form_valid(form)
 
-    def enviar_invitacion_email(self, invitacion):
+    def reenviar_invitacion(self, invitacion):
+        self.enviar_invitacion(invitacion)
+        invitacion.usado = False
+        invitacion.save()
+
+    def enviar_invitacion(self, invitacion):
         send_mail(
             'Invitación para unirte al regimiento',
             f'Por favor, utiliza este token para registrarte: {invitacion.token}',
@@ -83,3 +97,12 @@ class PerfilAdministradorView(LoginRequiredMixin, FormView):
             [invitacion.email],
             fail_silently=False,
         )
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Hubo un error con el formulario de invitación.")
+        return super().form_invalid(form)
+
+class UsuarioDeleteView(LoginRequiredMixin, DeleteView):
+    model = Usuario
+    success_url = reverse_lazy('perfil_administrador')
+    template_name = 'gestion_vehiculos/usuario_confirm_delete.html'

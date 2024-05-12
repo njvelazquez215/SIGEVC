@@ -22,7 +22,7 @@ class Invitacion(models.Model):
         ('cancelada', 'Cancelada'),
         ('pendiente', 'Pendiente'),
     )
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
     regimiento = models.ForeignKey('Regimiento', on_delete=models.CASCADE)
     rol = models.CharField(max_length=100, choices=[
         ('Jefe de Regimiento', 'Jefe de Regimiento'),

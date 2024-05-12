@@ -18,15 +18,13 @@
         main {
             padding: 20px;
         }
-        ul {
-            list-style: none;
+        ul, table {
+            width: 100%;
             padding: 0;
         }
-        li {
+        li, td, th {
             margin-bottom: 10px;
-        }
-        .btn {
-            margin-right: 5px;
+            text-align: left;
         }
     </style>
 </head>
@@ -39,25 +37,49 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn">Enviar Invitación</button>
+            <button type="submit">Enviar Invitación</button>
         </form>
 
         <h2>Invitaciones Pendientes</h2>
         <ul>
             {% for invitacion in invitaciones %}
             <li>
-                {{ invitacion.email }} - Token: {{ invitacion.token }}
-                <form method="post" style="display: inline;">
+                <form method="post" action="">
                     {% csrf_token %}
-                    <input type="hidden" name="invitacion_id" value="{{ invitacion.id }}">
-                    <button type="submit" name="cancelar_invitacion" class="btn">Cancelar</button>
-                    <button type="submit" name="reenviar_invitacion" class="btn">Reenviar</button>
+                    {{ invitacion.email }} - Token: {{ invitacion.token }}
+                    <button type="submit" name="reenviar" value="{{ invitacion.id }}">Reenviar</button>
+                    <button type="submit" name="eliminar" value="{{ invitacion.id }}">Eliminar</button>
                 </form>
             </li>
             {% empty %}
             <li>No hay invitaciones pendientes.</li>
             {% endfor %}
         </ul>
+
+        <h2>Usuarios Registrados</h2>
+        <table>
+            <tr>
+                <th>Email</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.first_name }}</td>
+                <td>{{ usuario.last_name }}</td>
+                <td>{{ usuario.rol }}</td>
+                <td>
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <button type="submit" name="eliminar" value="{{ usuario.id }}">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>
