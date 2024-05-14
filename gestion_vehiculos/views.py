@@ -12,6 +12,7 @@ from django.contrib import messages
 class IndexView(TemplateView):
     template_name = 'gestion_vehiculos/index.html'
 
+
 class UsuarioRegistroView(CreateView):
     model = Usuario
     form_class = UsuarioRegistroForm
@@ -24,7 +25,26 @@ class UsuarioRegistroView(CreateView):
 
 class UsuarioLoginView(LoginView):
     template_name = 'gestion_vehiculos/login.html'
-    success_url = '/enviar_invitacion/'
+
+    def get_success_url(self):
+        usuario = self.request.user
+        if usuario.rol == 'Administrador':
+            return reverse_lazy('perfil_administrador')
+        elif usuario.rol == 'Jefe de Escuadrón':
+            if usuario.escuadron:
+                return reverse_lazy('dashboard_escuadron', args=[usuario.escuadron.id])
+            else:
+                # Si el usuario es jefe de escuadrón pero no tiene escuadrón asignado
+                messages.error(self.request, "No se ha asignado un escuadrón a tu usuario.")
+                return reverse_lazy('index')
+        elif usuario.rol == 'Jefe de Sección':
+            if usuario.seccion:
+                return reverse_lazy('dashboard_seccion', args=[usuario.seccion.id])
+            else:
+                messages.error(self.request, "No se ha asignado una sección a tu usuario.")
+                return reverse_lazy('index')
+        else:
+            return reverse_lazy('index')
 
 class UsuarioLogoutView(LogoutView):
     next_page = reverse_lazy('login')
@@ -108,22 +128,28 @@ class UsuarioDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'gestion_vehiculos/usuario_confirm_delete.html'
 
 
-class EscuadronView(TemplateView):
-    template_name = 'escuadron_config.html'
+class DashboardEscuadronView(TemplateView):
+    template_name = 'dashboard_escuadron.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        escuadron_id = self.kwargs.get('escuadron_id')
-        escuadron = Escuadron.objects.get(id=escuadron_id)
+        escuadron = get_object_or_404(Escuadron, id=self.kwargs['escuadron_id'])
         secciones = Seccion.objects.filter(escuadron=escuadron)
-
         context['escuadron'] = escuadron
         context['secciones'] = secciones
         return context
 
-    def post(self, request, *args, **kwargs):
-        # Aquí iría la lógica para manejar la creación/edición de secciones y asignación de tanques
-        return redirect('nombre_de_url_para_ver_escuadron')
+
+class EscuadronConfigView(TemplateView):
+    template_name = 'escuadron_config.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        escuadron = get_object_or_404(Escuadron, id=self.kwargs['escuadron_id'])
+        secciones = Seccion.objects.filter(escuadron=escuadron)
+        context['escuadron'] = escuadron
+        context['secciones'] = secciones
+        return context
 
 class SeccionCreateView(View):
     def get(self, request, *args, **kwargs):
@@ -159,3 +185,14 @@ class SeccionDeleteView(View):
         seccion.delete()
         return redirect('ver_escuadron', escuadron_id=seccion.escuadron.id)
 
+class DashboardSeccionView(TemplateView):
+    template_name = 'dashboard_seccion.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        seccion_id = self.kwargs['seccion_id']
+        seccion = get_object_or_404(Seccion, id=seccion_id)
+        tanques = Tanque.objects.filter(seccion=seccion)
+        context['seccion'] = seccion
+        context['tanques'] = tanques
+        return context

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard de la Sección</title>
+</head>
+<body>
+    <h1>Dashboard de la Sección: {{ seccion.nombre }}</h1>
+    <h2>Vehículos a cargo</h2>
+    {% for tanque in tanques %}
+    <div>
+        <h3>Tanque: {{ tanque.nombre }}</h3>
+        <p>Estado: {{ tanque.estado }}</p>
+    </div>
+    {% endfor %}
+</body>
+</html>

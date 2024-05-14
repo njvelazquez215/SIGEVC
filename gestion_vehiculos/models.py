@@ -11,7 +11,8 @@ class Regimiento(models.Model):
 
 class Usuario(AbstractUser):
     regimiento = models.ForeignKey('Regimiento', on_delete=models.CASCADE, null=True, blank=True)
-    rol = models.CharField(max_length=100, choices=[('Administrador', 'Administrador'), ('Jefe', 'Jefe de Escuadrón'), ('Sección', 'Jefe de Sección')], default='Administrador')
+    rol = models.CharField(max_length=100, choices=[('Administrador', 'Administrador'), ('Jefe de Escuadrón', 'Jefe de Escuadrón'), ('Jefe de Sección', 'Jefe de Sección')], default='Administrador')
+    escuadron = models.ForeignKey('Escuadron', on_delete=models.SET_NULL, null=True, blank=True, related_name='jefes')
 
     def __str__(self):
         return f"{self.username} ({self.rol})"

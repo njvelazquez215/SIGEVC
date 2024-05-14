@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard del Escuadrón</title>
+</head>
+<body>
+    <h1>Dashboard del Escuadrón: {{ escuadron.nombre }}</h1>
+    <h2>Secciones</h2>
+    {% for seccion in secciones %}
+    <div>
+        <h3>Sección: {{ seccion.nombre }}</h3>
+        <p>Jefe de Sección: {{ seccion.jefe_seccion.username }}</p>
+        <p>Vehículos: {{ seccion.tanques.count }}</p>
+    </div>
+    {% endfor %}
+    <a href="{% url 'escuadron_config' escuadron.id %}">Configurar Escuadrón</a>
+</body>
+</html>
