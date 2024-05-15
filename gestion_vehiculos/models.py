@@ -33,6 +33,7 @@ class Invitacion(models.Model):
         ('Jefe de Escuadrón', 'Jefe de Escuadrón'),
         ('Jefe de Sección', 'Jefe de Sección')
     ])
+    escuadron = models.ForeignKey('Escuadron', on_delete=models.SET_NULL, null=True, blank=True)  # Nuevo campo opcional para escuadrón
     token = models.UUIDField(default=uuid.uuid4, unique=True)
     usado = models.BooleanField(default=False)
     estado = models.CharField(max_length=10, choices=ESTADOS, default='pendiente')

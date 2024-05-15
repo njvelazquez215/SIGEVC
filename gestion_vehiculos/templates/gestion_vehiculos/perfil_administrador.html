@@ -26,7 +26,25 @@
             margin-bottom: 10px;
             text-align: left;
         }
+        .hidden {
+            display: none;
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rolSelect = document.getElementById('id_rol');
+            const escuadronSelect = document.getElementById('id_escuadron');
+            function toggleEscuadronField() {
+                if (rolSelect.value === 'Jefe de Escuadrón' || rolSelect.value === 'Jefe de Sección') {
+                    escuadronSelect.parentElement.classList.remove('hidden');
+                } else {
+                    escuadronSelect.parentElement.classList.add('hidden');
+                }
+            }
+            rolSelect.addEventListener('change', toggleEscuadronField);
+            toggleEscuadronField();  // Call on page load to set initial state
+        });
+    </script>
 </head>
 <body>
     <header>
@@ -37,6 +55,9 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
+            <div class="hidden" id="escuadron-container">
+                {{ form.escuadron.label_tag }} {{ form.escuadron }}
+            </div>
             <button type="submit">Enviar Invitación</button>
         </form>
 
