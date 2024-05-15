@@ -93,9 +93,9 @@
                 <td>{{ usuario.last_name }}</td>
                 <td>{{ usuario.rol }}</td>
                 <td>
-                    <form method="post" action="">
+                    <form method="post" action="{% url 'eliminar_usuario' usuario.id %}">
                         {% csrf_token %}
-                        <button type="submit" name="eliminar" value="{{ usuario.id }}">Eliminar</button>
+                        <button type="submit" name="eliminar" value="Eliminar">Eliminar</button>
                     </form>
                 </td>
             </tr>

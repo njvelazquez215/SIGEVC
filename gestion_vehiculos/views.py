@@ -44,6 +44,8 @@ class UsuarioLoginView(LoginView):
                 messages.error(self.request, "No se ha asignado una sección a tu usuario.")
                 return reverse_lazy('index')
         else:
+            # Redirige a la página de inicio si el usuario no tiene un rol que coincida con los esperados
+            messages.error(self.request, "Tu usuario no tiene un rol que permita acceso específico.")
             return reverse_lazy('index')
 
 class UsuarioLogoutView(LogoutView):
@@ -122,10 +124,9 @@ class PerfilAdministradorView(UserPassesTestMixin, LoginRequiredMixin, FormView)
         messages.error(self.request, "Hubo un error con el formulario de invitación.")
         return super().form_invalid(form)
 
-class UsuarioDeleteView(LoginRequiredMixin, DeleteView):
+class UsuarioDeleteView(DeleteView):
     model = Usuario
     success_url = reverse_lazy('perfil_administrador')
-    template_name = 'gestion_vehiculos/usuario_confirm_delete.html'
 
 
 class DashboardEscuadronView(TemplateView):
