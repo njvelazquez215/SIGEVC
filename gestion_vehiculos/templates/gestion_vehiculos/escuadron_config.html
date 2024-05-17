@@ -1,19 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Configuración del Escuadrón</title>
+    <meta charset="UTF-8">
+    <title>Configuración de Escuadrón</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        header, footer {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Configuración del Escuadrón: {{ escuadron.nombre }}</h1>
-    <div>
-        <h2>Secciones</h2>
-        {% for seccion in secciones %}
-        <p>Sección: {{ seccion.nombre }}</p>
-        <p>Jefe de Sección: {{ seccion.jefe_seccion.username }}</p>
-        <a href="{% url 'editar_seccion' seccion.id %}">Editar Sección</a>
-        <a href="{% url 'eliminar_seccion' seccion.id %}">Eliminar Sección</a>
-        {% endfor %}
-    </div>
-    <a href="{% url 'crear_seccion' escuadron.id %}">Agregar Sección</a>
+    <header>
+        <h1>Configuración de Escuadrón</h1>
+    </header>
+    <main>
+        <h2>{{ escuadron.nombre }}</h2>
+
+        <h3>Crear Sección</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ seccion_form.as_p }}
+            <button type="submit" name="crear_seccion">Crear Sección</button>
+        </form>
+
+        <h3>Crear Tanque</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ tanque_form.as_p }}
+            <select name="seccion_id">
+                {% for seccion in escuadron.seccion_set.all %}
+                    <option value="{{ seccion.id }}">{{ seccion.nombre }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="crear_tanque">Crear Tanque</button>
+        </form>
+
+        <h3>Secciones</h3>
+        <ul>
+            {% for seccion in escuadron.seccion_set.all %}
+                <li>
+                    <strong>{{ seccion.nombre }}</strong> - Jefe: {{ seccion.jefe }}
+                    <ul>
+                        {% for tanque in seccion.tanque_set.all %}
+                            <li>{{ tanque.NI }} - {{ tanque.estado }} - Responsable: {{ tanque.responsable }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+    <footer>
+        <p>Derechos reservados © 2024</p>
+    </footer>
 </body>
 </html>

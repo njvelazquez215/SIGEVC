@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Usuario, Invitacion, Regimiento, Seccion, Escuadron
+from .models import Usuario, Invitacion, Regimiento, Seccion, Escuadron, Tanque
 from django.core.exceptions import ValidationError
 import uuid
 
@@ -84,6 +84,13 @@ class RegimientoForm(forms.ModelForm):
 
 
 class SeccionForm(forms.ModelForm):
+    jefe = forms.ModelChoiceField(queryset=Usuario.objects.filter(rol='Jefe de Sección'), required=False, label="Jefe de Sección")
+
     class Meta:
         model = Seccion
-        fields = ['nombre', 'jefe']  # Asegúrate de que el modelo Seccion tenga estos campos
+        fields = ['nombre', 'jefe']
+
+class TanqueForm(forms.ModelForm):
+    class Meta:
+        model = Tanque
+        fields = ['NI', 'responsable', 'estado']

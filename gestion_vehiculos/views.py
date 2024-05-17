@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, FormView, RedirectView, DeleteView, View
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm, RegimientoForm, SeccionForm
+from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm, RegimientoForm, SeccionForm, TanqueForm
 from .models import Usuario, Regimiento, Invitacion, Escuadron, Seccion, Tanque
 from django.core.mail import send_mail
 from django.conf import settings
@@ -138,33 +138,64 @@ class UsuarioDeleteView(DeleteView):
     success_url = reverse_lazy('perfil_administrador')
 
 
-class DashboardEscuadronView(TemplateView):
-    template_name = 'dashboard_escuadron.html'
+class DashboardEscuadronView(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'gestion_vehiculos/dashboard_escuadron.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        escuadron = get_object_or_404(Escuadron, id=self.kwargs['escuadron_id'])
-        secciones = Seccion.objects.filter(escuadron=escuadron)
-        context['escuadron'] = escuadron
-        context['secciones'] = secciones
-        return context
+    def test_func(self):
+        return self.request.user.rol == 'Jefe de Escuadrón' and self.request.user.escuadron
 
+    def get(self, request, escuadron_id):
+        escuadron = get_object_or_404(Escuadron, id=escuadron_id)
+        return render(request, self.template_name, {
+            'user': request.user,
+            'escuadron': escuadron
+        })
 
-class EscuadronConfigView(TemplateView):
-    template_name = 'escuadron_config.html'
+class EscuadronConfigView(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'gestion_vehiculos/escuadron_config.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        escuadron = get_object_or_404(Escuadron, id=self.kwargs['escuadron_id'])
-        secciones = Seccion.objects.filter(escuadron=escuadron)
-        context['escuadron'] = escuadron
-        context['secciones'] = secciones
-        return context
+    def test_func(self):
+        return self.request.user.rol == 'Jefe de Escuadrón' and self.request.user.escuadron
+
+    def get(self, request, escuadron_id):
+        escuadron = get_object_or_404(Escuadron, id=escuadron_id)
+        seccion_form = SeccionForm()
+        tanque_form = TanqueForm()
+        return render(request, self.template_name, {
+            'escuadron': escuadron,
+            'seccion_form': seccion_form,
+            'tanque_form': tanque_form
+        })
+
+    def post(self, request, escuadron_id):
+        escuadron = get_object_or_404(Escuadron, id=escuadron_id)
+        seccion_form = SeccionForm(request.POST)
+        tanque_form = TanqueForm(request.POST)
+
+        if 'crear_seccion' in request.POST and seccion_form.is_valid():
+            seccion = seccion_form.save(commit=False)
+            seccion.escuadron = escuadron
+            seccion.save()
+            return redirect('escuadron_config', escuadron_id=escuadron.id)
+
+        if 'crear_tanque' in request.POST and tanque_form.is_valid():
+            seccion_id = request.POST.get('seccion_id')
+            seccion = get_object_or_404(Seccion, id=seccion_id)
+            tanque = tanque_form.save(commit=False)
+            tanque.seccion = seccion
+            tanque.save()
+            return redirect('escuadron_config', escuadron_id=escuadron.id)
+
+        return render(request, self.template_name, {
+            'escuadron': escuadron,
+            'seccion_form': seccion_form,
+            'tanque_form': tanque_form
+        })
 
 class SeccionCreateView(View):
     def get(self, request, *args, **kwargs):
         form = SeccionForm()
-        return render(request, 'seccion_form.html', {'form': form})
+        return render(request, 'gestion_vehiculos/seccion_form.html', {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = SeccionForm(request.POST)

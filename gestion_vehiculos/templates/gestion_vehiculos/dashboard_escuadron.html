@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Dashboard del Escuadrón</title>
+    <meta charset="UTF-8">
+    <title>Dashboard de Escuadrón</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+        header, footer {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Dashboard del Escuadrón: {{ escuadron.nombre }}</h1>
-    <h2>Secciones</h2>
-    {% for seccion in secciones %}
-    <div>
-        <h3>Sección: {{ seccion.nombre }}</h3>
-        <p>Jefe de Sección: {{ seccion.jefe_seccion.username }}</p>
-        <p>Vehículos: {{ seccion.tanques.count }}</p>
-    </div>
-    {% endfor %}
-    <a href="{% url 'escuadron_config' escuadron.id %}">Configurar Escuadrón</a>
+    <header>
+        <h1>Dashboard de Escuadrón</h1>
+    </header>
+    <main>
+        <h2>Bienvenido, {{ user.username }}</h2>
+        <p>Este es el dashboard del escuadrón {{ escuadron.nombre }}.</p>
+        <p><a href="{% url 'escuadron_config' escuadron.id %}">Configurar Escuadrón</a></p>
+        <!-- Aquí se pueden agregar más secciones de información del escuadrón -->
+    </main>
+    <footer>
+        <p>Derechos reservados © 2024</p>
+    </footer>
 </body>
 </html>
