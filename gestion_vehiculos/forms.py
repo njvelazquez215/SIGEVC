@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Usuario, Invitacion, Regimiento, Seccion, Escuadron
+from django.core.exceptions import ValidationError
+import uuid
 
 
 class UsuarioRegistroForm(UserCreationForm):
@@ -21,13 +23,25 @@ class UsuarioRegistroForm(UserCreationForm):
         user = super().save(commit=False)
         token = self.cleaned_data.get('token')
         invitacion = Invitacion.objects.get(token=token)
+
+        print("Datos antes de guardar el usuario:")
+        print("Token:", token)
+        print("Invitación - Regimiento:", invitacion.regimiento)
+        print("Invitación - Rol:", invitacion.rol)
+        print("Invitación - Escuadron:", invitacion.escuadron)
+
         user.regimiento = invitacion.regimiento
         user.rol = invitacion.rol
-        user.escuadron = invitacion.escuadron  # Asignar el escuadron desde la invitación
+        user.escuadron = invitacion.escuadron  # Asegurar que el escuadrón se está guardando correctamente
+
         if commit:
             user.save()
             invitacion.usado = True
             invitacion.save()
+            print("Usuario guardado con éxito")
+        else:
+            print("Usuario no guardado en la base de datos")
+
         return user
 
 class UsuarioLoginForm(AuthenticationForm):
@@ -37,7 +51,7 @@ class UsuarioLoginForm(AuthenticationForm):
 
 class InvitacionForm(forms.ModelForm):
     escuadron = forms.ModelChoiceField(
-        queryset=Escuadron.objects.all(),  # Asegura cargar todos los escuadrones disponibles
+        queryset=Escuadron.objects.all(),
         required=False,
         empty_label="Seleccione un escuadrón"
     )
@@ -48,7 +62,7 @@ class InvitacionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(InvitacionForm, self).__init__(*args, **kwargs)
-        self.fields['escuadron'].queryset = Escuadron.objects.all()  # Carga inicial de todos los escuadrones
+        self.fields['escuadron'].queryset = Escuadron.objects.all()
 
         if 'rol' in self.data:
             try:
@@ -56,11 +70,12 @@ class InvitacionForm(forms.ModelForm):
                 if rol in ['Jefe de Escuadrón', 'Jefe de Sección']:
                     self.fields['escuadron'].queryset = Escuadron.objects.all()
                 else:
-                    self.fields['escuadron'].queryset = Escuadron.objects.none()  # Vaciar si no son estos roles
+                    self.fields['escuadron'].queryset = Escuadron.objects.none()
             except (ValueError, TypeError):
-                pass  # entrada inválida; no actualiza queryset
+                pass  # Entrada inválida; no actualiza queryset
         elif self.instance.pk:
-            self.fields['escuadron'].queryset = self.instance.escuadron_set.order_by('nombre')
+            self.fields['escuadron'].queryset = Escuadron.objects.all()
+
 
 class RegimientoForm(forms.ModelForm):
     class Meta:

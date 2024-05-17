@@ -28,26 +28,36 @@ class UsuarioLoginView(LoginView):
 
     def get_success_url(self):
         usuario = self.request.user
+        print(f"Usuario: {usuario.username}, Rol: {usuario.rol}, Escuadron ID: {getattr(usuario.escuadron, 'id', 'No Asignado')}")
+
         if usuario.rol == 'Administrador':
+            print("Redirigiendo al perfil de Administrador.")
             return reverse_lazy('perfil_administrador')
+
         elif usuario.rol == 'Jefe de Escuadrón':
             if usuario.escuadron:
-                return reverse_lazy('dashboard_escuadron', args=[usuario.escuadron.id])
+                url = reverse_lazy('dashboard_escuadron', args=[usuario.escuadron.id])
+                print(f"Redirigiendo a Dashboard de Escuadrón: {url}")
+                return url
             else:
-                # Si el usuario es jefe de escuadrón pero no tiene escuadrón asignado
                 messages.error(self.request, "No se ha asignado un escuadrón a tu usuario.")
+                print("Error: Jefe de escuadrón sin escuadrón asignado.")
                 return reverse_lazy('index')
+
         elif usuario.rol == 'Jefe de Sección':
             if usuario.seccion:
-                return reverse_lazy('dashboard_seccion', args=[usuario.seccion.id])
+                url = reverse_lazy('dashboard_seccion', args=[usuario.seccion.id])
+                print(f"Redirigiendo a Dashboard de Sección: {url}")
+                return url
             else:
                 messages.error(self.request, "No se ha asignado una sección a tu usuario.")
+                print("Error: Jefe de sección sin sección asignada.")
                 return reverse_lazy('index')
-        else:
-            # Redirige a la página de inicio si el usuario no tiene un rol que coincida con los esperados
-            messages.error(self.request, "Tu usuario no tiene un rol que permita acceso específico.")
-            return reverse_lazy('index')
 
+        else:
+            messages.error(self.request, "Tu usuario no tiene un rol que permita acceso específico.")
+            print("Error: Rol de usuario no específico o sin permisos.")
+            return reverse_lazy('index')
 class UsuarioLogoutView(LogoutView):
     next_page = reverse_lazy('login')
 
@@ -102,8 +112,7 @@ class PerfilAdministradorView(UserPassesTestMixin, LoginRequiredMixin, FormView)
         invitacion = form.save(commit=False)
         invitacion.regimiento = self.request.user.regimiento
         invitacion.save()
-        self.enviar_invitacion(invitacion)
-        messages.success(self.request, "Invitación enviada correctamente.")
+        print("Invitación guardada con escuadrón:", invitacion.escuadron)  # Debug para confirmar que se guarda el escuadrón
         return super().form_valid(form)
 
     def reenviar_invitacion(self, invitacion):

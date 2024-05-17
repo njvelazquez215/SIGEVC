@@ -1,4 +1,3 @@
-# URLs Ajustadas
 from django.urls import path
 from .views import (UsuarioRegistroView, UsuarioLoginView, UsuarioLogoutView, IndexView, CrearRegimientoView,
                     PerfilAdministradorView, UsuarioDeleteView, DashboardEscuadronView, EscuadronConfigView,

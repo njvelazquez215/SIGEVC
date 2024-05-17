@@ -33,16 +33,25 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const rolSelect = document.getElementById('id_rol');
-            const escuadronSelect = document.getElementById('id_escuadron');
+            const escuadronContainer = document.getElementById('escuadron-container');
+
             function toggleEscuadronField() {
-                if (rolSelect.value === 'Jefe de Escuadrón' || rolSelect.value === 'Jefe de Sección') {
-                    escuadronSelect.parentElement.classList.remove('hidden');
+                const rolesThatRequireEscuadron = ['Jefe de Escuadrón', 'Jefe de Sección'];
+                if (rolesThatRequireEscuadron.includes(rolSelect.value)) {
+                    escuadronContainer.style.display = 'block';
                 } else {
-                    escuadronSelect.parentElement.classList.add('hidden');
+                    escuadronContainer.style.display = 'none';
                 }
             }
+
             rolSelect.addEventListener('change', toggleEscuadronField);
             toggleEscuadronField();  // Call on page load to set initial state
+
+            // Añadir log en consola al enviar el formulario
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function() {
+                console.log('Escuadrón seleccionado:', escuadronContainer.value);
+            });
         });
     </script>
 </head>
@@ -54,7 +63,8 @@
         <h2>Enviar Invitaciones</h2>
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.email.label_tag }} {{ form.email }}<br>
+            {{ form.rol.label_tag }} {{ form.rol }}<br>
             <div class="hidden" id="escuadron-container">
                 {{ form.escuadron.label_tag }} {{ form.escuadron }}
             </div>
