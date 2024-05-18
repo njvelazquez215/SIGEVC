@@ -66,3 +66,10 @@ class Tanque(models.Model):
     def __str__(self):
         return f"{self.NI} - {self.estado}"
 
+class Novedad(models.Model):
+    tanque = models.ForeignKey(Tanque, on_delete=models.CASCADE)
+    fecha = models.DateField(auto_now_add=True)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return f"Novedad del {self.fecha} para {self.tanque.NI}"

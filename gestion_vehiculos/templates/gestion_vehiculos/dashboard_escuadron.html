@@ -18,6 +18,18 @@
         main {
             padding: 20px;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -28,7 +40,56 @@
         <h2>Bienvenido, {{ user.username }}</h2>
         <p>Este es el dashboard del escuadrón {{ escuadron.nombre }}.</p>
         <p><a href="{% url 'escuadron_config' escuadron.id %}">Configurar Escuadrón</a></p>
-        <!-- Aquí se pueden agregar más secciones de información del escuadrón -->
+
+        <h3>Estado General del Escuadrón</h3>
+        <ul>
+            <li>Total de Tanques: {{ total_tanques }}</li>
+            <li>Tanques en Servicio: {{ tanques_en_servicio }}</li>
+            <li>Tanques en Servicio Limitado: {{ tanques_servicio_limitado }}</li>
+            <li>Tanques Fuera de Servicio: {{ tanques_fuera_servicio }}</li>
+        </ul>
+
+        <h3>Secciones</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre de la Sección</th>
+                    <th>Jefe de Sección</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for seccion in secciones %}
+                <tr>
+                    <td>{{ seccion.nombre }}</td>
+                    <td>{{ seccion.jefe }}</td>
+                    <td><a href="{% url 'dashboard_seccion' seccion.id %}">Ver Sección</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Tanques</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>NI</th>
+                    <th>Estado</th>
+                    <th>Responsable</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tanque in tanques %}
+                <tr>
+                    <td>{{ tanque.NI }}</td>
+                    <td>{{ tanque.estado }}</td>
+                    <td>{{ tanque.responsable }}</td>
+                    <td><a href="{% url 'ver_tanque' tanque.id %}">Ver Tanque</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>

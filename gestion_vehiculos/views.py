@@ -146,10 +146,19 @@ class DashboardEscuadronView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def get(self, request, escuadron_id):
         escuadron = get_object_or_404(Escuadron, id=escuadron_id)
-        return render(request, self.template_name, {
+        secciones = Seccion.objects.filter(escuadron=escuadron)
+        tanques = Tanque.objects.filter(seccion__escuadron=escuadron)
+        context = {
             'user': request.user,
-            'escuadron': escuadron
-        })
+            'escuadron': escuadron,
+            'secciones': secciones,
+            'tanques': tanques,
+            'total_tanques': tanques.count(),
+            'tanques_en_servicio': tanques.filter(estado='En servicio').count(),
+            'tanques_servicio_limitado': tanques.filter(estado='Servicio limitado').count(),
+            'tanques_fuera_servicio': tanques.filter(estado='Fuera de servicio').count(),
+        }
+        return render(request, self.template_name, context)
 
 class EscuadronConfigView(LoginRequiredMixin, UserPassesTestMixin, View):
     template_name = 'gestion_vehiculos/escuadron_config.html'
@@ -237,3 +246,18 @@ class DashboardSeccionView(TemplateView):
         context['seccion'] = seccion
         context['tanques'] = tanques
         return context
+
+
+class VerTanqueView(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'gestion_vehiculos/ver_tanque.html'
+
+    def test_func(self):
+        # Permitir acceso sólo a los jefes de escuadrón y jefes de sección
+        return self.request.user.rol in ['Jefe de Escuadrón', 'Jefe de Sección']
+
+    def get(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+        context = {
+            'tanque': tanque,
+        }
+        return render(request, self.template_name, context)
