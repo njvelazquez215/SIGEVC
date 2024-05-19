@@ -1,16 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Dashboard de la Sección</title>
+    <meta charset="UTF-8">
+    <title>Dashboard de Sección</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+        header, footer {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-    <h1>Dashboard de la Sección: {{ seccion.nombre }}</h1>
-    <h2>Vehículos a cargo</h2>
-    {% for tanque in tanques %}
-    <div>
-        <h3>Tanque: {{ tanque.nombre }}</h3>
-        <p>Estado: {{ tanque.estado }}</p>
-    </div>
-    {% endfor %}
+    <header>
+        <h1>Dashboard de Sección</h1>
+    </header>
+    <main>
+        <h2>{{ seccion.nombre }}</h2>
+        <p>Jefe de Sección: {{ seccion.jefe.username }}</p>
+
+        <h3>Tanques de la Sección</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>NI</th>
+                    <th>Estado</th>
+                    <th>Responsable</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tanque in tanques %}
+                <tr>
+                    <td>{{ tanque.NI }}</td>
+                    <td>{{ tanque.estado }}</td>
+                    <td>{{ tanque.responsable }}</td>
+                    <td><a href="{% url 'ver_tanque' tanque.id %}">Ver Tanque</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <p>Derechos reservados © 2024</p>
+    </footer>
 </body>
 </html>

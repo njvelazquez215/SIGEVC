@@ -30,6 +30,17 @@
             padding: 10px;
             text-align: left;
         }
+        .summary-box {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .summary-item {
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -37,39 +48,38 @@
         <h1>Dashboard de Escuadrón</h1>
     </header>
     <main>
-        <h2>Bienvenido, {{ user.username }}</h2>
+        <h2>Bienvenido, {{ request.user.username }}</h2>
         <p>Este es el dashboard del escuadrón {{ escuadron.nombre }}.</p>
-        <p><a href="{% url 'escuadron_config' escuadron.id %}">Configurar Escuadrón</a></p>
 
-        <h3>Estado General del Escuadrón</h3>
+        <div class="summary-box">
+            <div class="summary-item">
+                <h3>Total de Tanques</h3>
+                <p>{{ estado_general.total }}</p>
+            </div>
+            <div class="summary-item">
+                <h3>En Servicio</h3>
+                <p>{{ estado_general.en_servicio }}</p>
+            </div>
+            <div class="summary-item">
+                <h3>Servicio Limitado</h3>
+                <p>{{ estado_general.servicio_limitado }}</p>
+            </div>
+            <div class="summary-item">
+                <h3>Fuera de Servicio</h3>
+                <p>{{ estado_general.fuera_servicio }}</p>
+            </div>
+        </div>
+
+        <h3>Secciones del Escuadrón</h3>
         <ul>
-            <li>Total de Tanques: {{ total_tanques }}</li>
-            <li>Tanques en Servicio: {{ tanques_en_servicio }}</li>
-            <li>Tanques en Servicio Limitado: {{ tanques_servicio_limitado }}</li>
-            <li>Tanques Fuera de Servicio: {{ tanques_fuera_servicio }}</li>
+            {% for seccion in secciones %}
+            <li>
+                <a href="{% url 'dashboard_seccion' seccion.id %}">{{ seccion.nombre }}</a>
+            </li>
+            {% endfor %}
         </ul>
 
-        <h3>Secciones</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre de la Sección</th>
-                    <th>Jefe de Sección</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for seccion in secciones %}
-                <tr>
-                    <td>{{ seccion.nombre }}</td>
-                    <td>{{ seccion.jefe }}</td>
-                    <td><a href="{% url 'dashboard_seccion' seccion.id %}">Ver Sección</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <h3>Tanques</h3>
+        <h3>Tanques del Escuadrón</h3>
         <table>
             <thead>
                 <tr>
