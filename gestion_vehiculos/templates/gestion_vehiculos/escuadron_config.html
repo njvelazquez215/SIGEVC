@@ -17,6 +17,22 @@
         main {
             padding: 20px;
         }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -24,13 +40,16 @@
         <h1>Configuración de Escuadrón</h1>
     </header>
     <main>
+        <div>
+            <a class="btn" href="{% url 'dashboard_escuadron' escuadron.id %}">Volver al Dashboard</a>
+        </div>
         <h2>{{ escuadron.nombre }}</h2>
 
         <h3>Crear Sección</h3>
         <form method="post">
             {% csrf_token %}
             {{ seccion_form.as_p }}
-            <button type="submit" name="crear_seccion">Crear Sección</button>
+            <button type="submit" name="crear_seccion" class="btn">Crear Sección</button>
         </form>
 
         <h3>Crear Tanque</h3>
@@ -42,7 +61,7 @@
                     <option value="{{ seccion.id }}">{{ seccion.nombre }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" name="crear_tanque">Crear Tanque</button>
+            <button type="submit" name="crear_tanque" class="btn">Crear Tanque</button>
         </form>
 
         <h3>Secciones</h3>

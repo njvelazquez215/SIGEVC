@@ -41,6 +41,22 @@
             border-radius: 5px;
             text-align: center;
         }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -70,16 +86,14 @@
             </div>
         </div>
 
-        <h3>Secciones del Escuadrón</h3>
-        <ul>
-            {% for seccion in secciones %}
-            <li>
-                <a href="{% url 'dashboard_seccion' seccion.id %}">{{ seccion.nombre }}</a>
-            </li>
-            {% endfor %}
-        </ul>
+        <div>
+            <a class="btn" href="{% url 'escuadron_config' escuadron.id %}">Configurar Escuadrón</a>
+        </div>
 
         <h3>Tanques del Escuadrón</h3>
+        {% for seccion in secciones %}
+        <h4>{{ seccion.nombre }}</h4>
+        <p>Jefe de Sección: {{ seccion.jefe }}</p>
         <table>
             <thead>
                 <tr>
@@ -91,15 +105,18 @@
             </thead>
             <tbody>
                 {% for tanque in tanques %}
+                {% if tanque.seccion == seccion %}
                 <tr>
                     <td>{{ tanque.NI }}</td>
                     <td>{{ tanque.estado }}</td>
                     <td>{{ tanque.responsable }}</td>
                     <td><a href="{% url 'ver_tanque' tanque.id %}">Ver Tanque</a></td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
+        {% endfor %}
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>
