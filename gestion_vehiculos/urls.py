@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (UsuarioRegistroView, UsuarioLoginView, UsuarioLogoutView, IndexView, CrearRegimientoView,
                     PerfilAdministradorView, UsuarioDeleteView, DashboardEscuadronView, EscuadronConfigView,
                     SeccionCreateView, SeccionUpdateView, SeccionDeleteView, DashboardSeccionView, VerTanqueView,
-                    EditarTanqueView, EliminarTanqueView)
+                    EditarTanqueView, EliminarTanqueView, NovedadesTanqueView)
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -23,4 +23,5 @@ urlpatterns = [
     path('tanque/<int:tanque_id>/ver/', VerTanqueView.as_view(), name='ver_tanque'),
     path('tanque/<int:pk>/editar/', EditarTanqueView.as_view(), name='editar_tanque'),
     path('tanque/<int:pk>/eliminar/', EliminarTanqueView.as_view(), name='eliminar_tanque'),
+    path('tanque/<int:tanque_id>/novedades/', NovedadesTanqueView.as_view(), name='novedades_tanque'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

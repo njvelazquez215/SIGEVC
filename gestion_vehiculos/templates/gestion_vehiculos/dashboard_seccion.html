@@ -30,6 +30,39 @@
             padding: 10px;
             text-align: left;
         }
+        .summary-box {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .summary-item {
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #007BFF;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28A745;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #DC3545;
+            color: white;
+        }
+        .btn-primary:hover, .btn-success:hover, .btn-danger:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -39,6 +72,25 @@
     <main>
         <h2>{{ seccion.nombre }}</h2>
         <p>Jefe de Sección: {{ seccion.jefe.username }}</p>
+
+        <div class="summary-box">
+            <div class="summary-item">
+                <h3>Total de Tanques</h3>
+                <p>{{ estado_general.total }}</p>
+            </div>
+            <div class="summary-item">
+                <h3>En Servicio</h3>
+                <p>{{ estado_general.en_servicio }}</p>
+            </div>
+            <div class="summary-item">
+                <h3>Servicio Limitado</h3>
+                <p>{{ estado_general.servicio_limitado }}</p>
+            </div>
+            <div class="summary-item">
+                <h3>Fuera de Servicio</h3>
+                <p>{{ estado_general.fuera_servicio }}</p>
+            </div>
+        </div>
 
         <h3>Tanques de la Sección</h3>
         <table>
@@ -56,7 +108,10 @@
                     <td>{{ tanque.NI }}</td>
                     <td>{{ tanque.estado }}</td>
                     <td>{{ tanque.responsable }}</td>
-                    <td><a href="{% url 'ver_tanque' tanque.id %}">Ver Tanque</a></td>
+                    <td>
+                        <a href="{% url 'ver_tanque' tanque.id %}" class="btn btn-primary">Ver Novedades</a>
+                        <a href="{% url 'novedades_tanque' tanque.id %}" class="btn btn-success">Novedades</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

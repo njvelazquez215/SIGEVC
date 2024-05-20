@@ -246,9 +246,17 @@ class DashboardSeccionView(LoginRequiredMixin, UserPassesTestMixin, View):
         seccion = get_object_or_404(Seccion, id=seccion_id)
         tanques = Tanque.objects.filter(seccion=seccion)
 
+        estado_general = {
+            'total': tanques.count(),
+            'en_servicio': tanques.filter(estado='En servicio').count(),
+            'servicio_limitado': tanques.filter(estado='Servicio limitado').count(),
+            'fuera_servicio': tanques.filter(estado='Fuera de servicio').count(),
+        }
+
         context = {
             'seccion': seccion,
             'tanques': tanques,
+            'estado_general': estado_general,
         }
         return render(request, self.template_name, context)
 
@@ -262,8 +270,11 @@ class VerTanqueView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def get(self, request, tanque_id):
         tanque = get_object_or_404(Tanque, id=tanque_id)
+        rol_usuario = request.user.rol
+        dashboard_url = 'dashboard_escuadron' if rol_usuario == 'Jefe de Escuadrón' else 'dashboard_seccion'
         context = {
             'tanque': tanque,
+            'dashboard_url': dashboard_url
         }
         return render(request, self.template_name, context)
 
@@ -288,3 +299,17 @@ class EliminarTanqueView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.request.user.rol == 'Jefe de Escuadrón'
+
+
+class NovedadesTanqueView(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'gestion_vehiculos/novedades_tanque.html'
+
+    def test_func(self):
+        return self.request.user.rol == 'Jefe de Sección'
+
+    def get(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+        context = {
+            'tanque': tanque,
+        }
+        return render(request, self.template_name, context)

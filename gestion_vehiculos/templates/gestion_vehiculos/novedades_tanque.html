@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Detalles del Tanque</title>
+    <title>Novedades del Tanque</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,17 +36,19 @@
 </head>
 <body>
     <header>
-        <h1>Detalles del Tanque</h1>
+        <h1>Novedades del Tanque {{ tanque.NI }}</h1>
     </header>
     <main>
-        <h2>NI: {{ tanque.NI }}</h2>
-        <p><strong>Estado:</strong> {{ tanque.estado }}</p>
-        <p><strong>Responsable:</strong> {{ tanque.responsable }}</p>
+        <h2>Responsable: {{ tanque.responsable }}</h2>
+        <p>Estado: {{ tanque.estado }}</p>
 
         <h3>Novedades</h3>
         <!-- Aquí se podrá implementar la checklist de novedades -->
-
-        <a href="{% url dashboard_url tanque.seccion.id %}" class="btn btn-primary">Volver</a>
+        <form method="post">
+            {% csrf_token %}
+            <!-- Agregar la checklist aquí -->
+            <button type="submit" class="btn btn-primary">Guardar Novedades</button>
+        </form>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>
