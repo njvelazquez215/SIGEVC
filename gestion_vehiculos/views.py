@@ -313,3 +313,34 @@ class NovedadesTanqueView(LoginRequiredMixin, UserPassesTestMixin, View):
             'tanque': tanque,
         }
         return render(request, self.template_name, context)
+
+
+class TablaControl1View(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'gestion_vehiculos/tabla_control_1.html'
+
+    def test_func(self):
+        return self.request.user.rol in ['Jefe de Escuadrón', 'Jefe de Sección']
+
+    def get(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+        return render(request, self.template_name, {'tanque': tanque})
+
+class TablaControl2View(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'gestion_vehiculos/tabla_control_2.html'
+
+    def test_func(self):
+        return self.request.user.rol in ['Jefe de Escuadrón', 'Jefe de Sección']
+
+    def get(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+        return render(request, self.template_name, {'tanque': tanque})
+
+class TablaControl3View(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'gestion_vehiculos/tabla_control_3.html'
+
+    def test_func(self):
+        return self.request.user.rol in ['Jefe de Escuadrón', 'Jefe de Sección']
+
+    def get(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+        return render(request, self.template_name, {'tanque': tanque})

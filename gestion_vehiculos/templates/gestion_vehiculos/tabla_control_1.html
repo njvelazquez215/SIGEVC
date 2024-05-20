@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Detalles del Tanque</title>
+    <title>Tabla de Control Nro 1</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,35 +19,33 @@
             padding: 20px;
         }
         .btn {
-            display: inline-block;
             padding: 10px 20px;
-            margin: 5px;
-            text-decoration: none;
-            color: white;
+            border: none;
             border-radius: 5px;
-        }
-        .btn-primary {
-            background-color: #007bff;
+            cursor: pointer;
+            font-size: 16px;
         }
         .btn-secondary {
             background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Detalles del Tanque</h1>
+        <h1>Tabla de Control Nro 1</h1>
     </header>
     <main>
         <h2>NI: {{ tanque.NI }}</h2>
         <p><strong>Estado:</strong> {{ tanque.estado }}</p>
         <p><strong>Responsable:</strong> {{ tanque.responsable }}</p>
-        <h3>Novedades</h3>
-        <!-- Botones para las tablas de control -->
-        <a href="{% url 'tabla_control_1' tanque.id %}" class="btn btn-primary">Tabla de control Nro 1</a>
-        <a href="{% url 'tabla_control_2' tanque.id %}" class="btn btn-primary">Tabla de control Nro 2</a>
-        <a href="{% url 'tabla_control_3' tanque.id %}" class="btn btn-primary">Tabla de control Nro 3</a>
-        <a href="{% if request.user.rol == 'Jefe de Escuadrón' %}{% url 'dashboard_escuadron' tanque.seccion.escuadron.id %}{% else %}{% url 'dashboard_seccion' tanque.seccion.id %}{% endif %}" class="btn btn-secondary">Volver</a>
+
+        <!-- Aquí se implementará la checklist -->
+
+        <a href="{% url 'novedades_tanque' tanque.id %}" class="btn btn-secondary">Volver</a>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>

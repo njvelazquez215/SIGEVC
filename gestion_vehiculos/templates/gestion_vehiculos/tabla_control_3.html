@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tabla de Control Nro 3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+        header, footer {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tabla de Control Nro 3</h1>
+    </header>
+    <main>
+        <h2>NI: {{ tanque.NI }}</h2>
+        <p><strong>Estado:</strong> {{ tanque.estado }}</p>
+        <p><strong>Responsable:</strong> {{ tanque.responsable }}</p>
+
+        <!-- Aquí se implementará la checklist -->
+
+        <a href="{% url 'novedades_tanque' tanque.id %}" class="btn btn-secondary">Volver</a>
+    </main>
+    <footer>
+        <p>Derechos reservados © 2024</p>
+    </footer>
+</body>
+</html>
