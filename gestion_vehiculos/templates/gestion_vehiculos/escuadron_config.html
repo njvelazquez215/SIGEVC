@@ -18,20 +18,90 @@
             padding: 20px;
         }
         .btn {
-            display: inline-block;
             padding: 10px 20px;
-            margin: 10px 0;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            color: #fff;
-            background-color: #007bff;
             border: none;
             border-radius: 5px;
-            text-decoration: none;
+            cursor: pointer;
+            font-size: 16px;
         }
-        .btn:hover {
-            background-color: #0056b3;
+        .btn-primary {
+            background-color: #007BFF;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28A745;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #DC3545;
+            color: white;
+        }
+        .btn-primary:hover, .btn-success:hover, .btn-danger:hover {
+            opacity: 0.8;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+        }
+        .section-container, .tank-container {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .tank-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .tank-info {
+            flex-grow: 1;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+            top: 20%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        select {
+            font-size: 16px;
+            padding: 5px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -40,46 +110,111 @@
         <h1>Configuración de Escuadrón</h1>
     </header>
     <main>
-        <div>
-            <a class="btn" href="{% url 'dashboard_escuadron' escuadron.id %}">Volver al Dashboard</a>
-        </div>
         <h2>{{ escuadron.nombre }}</h2>
 
         <h3>Crear Sección</h3>
         <form method="post">
             {% csrf_token %}
             {{ seccion_form.as_p }}
-            <button type="submit" name="crear_seccion" class="btn">Crear Sección</button>
+            <button type="submit" name="crear_seccion" class="btn btn-success">Crear Sección</button>
         </form>
 
         <h3>Crear Tanque</h3>
         <form method="post">
             {% csrf_token %}
             {{ tanque_form.as_p }}
-            <select name="seccion_id">
+            <select name="seccion_id" style="font-size: 16px; padding: 5px; margin-bottom: 10px;">
                 {% for seccion in escuadron.seccion_set.all %}
                     <option value="{{ seccion.id }}">{{ seccion.nombre }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" name="crear_tanque" class="btn">Crear Tanque</button>
+            <br>
+            <button type="submit" name="crear_tanque" class="btn btn-success">Crear Tanque</button>
         </form>
 
         <h3>Secciones</h3>
-        <ul>
+        <div>
             {% for seccion in escuadron.seccion_set.all %}
-                <li>
-                    <strong>{{ seccion.nombre }}</strong> - Jefe: {{ seccion.jefe }}
-                    <ul>
+                <div class="section-container">
+                    <div class="section-header">{{ seccion.nombre }} - Jefe: {{ seccion.jefe }}</div>
+                    <div>
                         {% for tanque in seccion.tanque_set.all %}
-                            <li>{{ tanque.NI }} - {{ tanque.estado }} - Responsable: {{ tanque.responsable }}</li>
+                            <div class="tank-container">
+                                <div class="tank-info">{{ tanque.NI }} - {{ tanque.estado }} - Responsable: {{ tanque.responsable }}</div>
+                                <div class="btn-container">
+                                    <button class="btn btn-success" onclick="editTanque({{ tanque.id }}, '{{ tanque.NI }}', '{{ tanque.estado }}', '{{ tanque.responsable }}')">Editar</button>
+                                    <button class="btn btn-danger" onclick="confirmDeleteTanque({{ tanque.id }}, '{{ tanque.NI }}')">Eliminar</button>
+                                </div>
+                            </div>
                         {% endfor %}
-                    </ul>
-                </li>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
+
+        <button class="btn btn-primary" onclick="window.location.href='{% url 'dashboard_escuadron' escuadron.id %}'">Volver al Dashboard</button>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>
     </footer>
+
+    <div id="editFormContainer" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditForm()">&times;</span>
+            <h2>Editar Tanque</h2>
+            <form id="editForm" method="post">
+                {% csrf_token %}
+                <label for="editNI">NI</label>
+                <input type="text" id="editNI" name="NI">
+                <label for="editEstado">Estado</label>
+                <select id="editEstado" name="estado">
+                    <option value="En servicio">En servicio</option>
+                    <option value="Servicio limitado">Servicio limitado</option>
+                    <option value="Fuera de servicio">Fuera de servicio</option>
+                </select>
+                <label for="editResponsable">Responsable</label>
+                <input type="text" id="editResponsable" name="responsable">
+                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                <button type="button" class="btn btn-danger" onclick="closeEditForm()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteConfirmContainer" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteConfirm()">&times;</span>
+            <h2>Eliminar Tanque</h2>
+            <p>¿Está seguro que desea eliminar el tanque con NI <span id="deleteNI"></span>?</p>
+            <form id="deleteForm" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteConfirm()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function editTanque(id, NI, estado, responsable) {
+            document.getElementById('editNI').value = NI;
+            document.getElementById('editEstado').value = estado;
+            document.getElementById('editResponsable').value = responsable;
+            document.getElementById('editForm').action = '{% url "editar_tanque" 0 %}'.replace('0', id);
+            document.getElementById('editFormContainer').style.display = 'block';
+        }
+
+        function closeEditForm() {
+            document.getElementById('editFormContainer').style.display = 'none';
+        }
+
+        function confirmDeleteTanque(id, NI) {
+            document.getElementById('deleteNI').textContent = NI;
+            document.getElementById('deleteForm').action = '{% url "eliminar_tanque" 0 %}'.replace('0', id);
+            document.getElementById('deleteConfirmContainer').style.display = 'block';
+        }
+
+        function closeDeleteConfirm() {
+            document.getElementById('deleteConfirmContainer').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

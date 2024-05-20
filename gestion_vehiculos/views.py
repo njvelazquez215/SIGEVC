@@ -1,5 +1,5 @@
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, FormView, RedirectView, DeleteView, View
+from django.urls import reverse_lazy, reverse
+from django.views.generic import CreateView, TemplateView, FormView, RedirectView, DeleteView, View, UpdateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import UsuarioRegistroForm, UsuarioLoginForm, InvitacionForm, RegimientoForm, SeccionForm, TanqueForm
@@ -266,3 +266,25 @@ class VerTanqueView(LoginRequiredMixin, UserPassesTestMixin, View):
             'tanque': tanque,
         }
         return render(request, self.template_name, context)
+
+class EditarTanqueView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Tanque
+    fields = ['NI', 'estado', 'responsable']
+    template_name = 'gestion_vehiculos/editar_tanque.html'
+
+    def get_success_url(self):
+        return reverse_lazy('escuadron_config', kwargs={'escuadron_id': self.object.seccion.escuadron.id})
+
+    def test_func(self):
+        return self.request.user.rol == 'Jefe de Escuadrón'
+
+class EliminarTanqueView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Tanque
+    template_name = 'gestion_vehiculos/eliminar_tanque.html'
+
+    def get_success_url(self):
+        escuadron_id = self.object.seccion.escuadron.id
+        return reverse_lazy('escuadron_config', kwargs={'escuadron_id': escuadron_id})
+
+    def test_func(self):
+        return self.request.user.rol == 'Jefe de Escuadrón'
