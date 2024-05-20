@@ -325,6 +325,15 @@ class TablaControl1View(LoginRequiredMixin, UserPassesTestMixin, View):
         tanque = get_object_or_404(Tanque, id=tanque_id)
         return render(request, self.template_name, {'tanque': tanque})
 
+    def post(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+        # Aquí puedes manejar la lógica de guardar las novedades
+        # Puedes guardar los datos en el modelo Novedad o en otro modelo según la estructura de tu aplicación
+        # Ejemplo:
+        # motor_aceite = request.POST.get('motor_aceite')
+        # novedad_motor_aceite = request.POST.get('novedad_motor_aceite')
+        return redirect('novedades_tanque', tanque_id=tanque.id)
+
 class TablaControl2View(LoginRequiredMixin, UserPassesTestMixin, View):
     template_name = 'gestion_vehiculos/tabla_control_2.html'
 

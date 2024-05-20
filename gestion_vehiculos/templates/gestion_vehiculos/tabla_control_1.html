@@ -19,33 +19,393 @@
             padding: 20px;
         }
         .btn {
+            display: inline-block;
             padding: 10px 20px;
-            border: none;
+            margin: 5px;
+            text-decoration: none;
+            color: white;
             border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #007bff;
         }
         .btn-secondary {
             background-color: #6c757d;
-            color: white;
         }
-        .btn-secondary:hover {
-            opacity: 0.8;
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            margin-bottom: 5px;
+        }
+        .input-group select, .input-group textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
     </style>
+    <script>
+        function toggleNovedadInput(selectElement, novedadInputId) {
+            const novedadInput = document.getElementById(novedadInputId);
+            if (selectElement.value === "con novedad") {
+                novedadInput.style.display = 'block';
+            } else {
+                novedadInput.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
     <header>
         <h1>Tabla de Control Nro 1</h1>
     </header>
     <main>
-        <h2>NI: {{ tanque.NI }}</h2>
-        <p><strong>Estado:</strong> {{ tanque.estado }}</p>
-        <p><strong>Responsable:</strong> {{ tanque.responsable }}</p>
+        <form method="post">
+            {% csrf_token %}
 
-        <!-- Aquí se implementará la checklist -->
+            <!-- Grupo Motopropulsor -->
+            <h2>Grupo Motopropulsor</h2>
+            <div class="input-group">
+                <label for="motor_aceite">Motor (nivel de aceite bajo – sin novedad)</label>
+                <select name="motor_aceite" id="motor_aceite">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="motor_service">Motor (requiere service 60 - requiere service 120 – sin novedad)</label>
+                <select name="motor_service" id="motor_service">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="requiere service 60">Requiere service 60</option>
+                    <option value="requiere service 120">Requiere service 120</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="caja_cambios_aceite">Caja de Cambios (nivel de aceite bajo – sin novedad)</label>
+                <select name="caja_cambios_aceite" id="caja_cambios_aceite">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="caja_cambios_service">Caja de Cambios (requiere service 60 - requiere service 120 – sin novedad)</label>
+                <select name="caja_cambios_service" id="caja_cambios_service">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="requiere service 60">Requiere service 60</option>
+                    <option value="requiere service 120">Requiere service 120</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="sistema_freno_aceite">Sistema de freno (nivel de aceite bajo – sin novedad)</label>
+                <select name="sistema_freno_aceite" id="sistema_freno_aceite">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="sistema_freno_pastillas">Sistema de freno (pastillas fuera de servicio – pastillas desgastadas – sin novedad)</label>
+                <select name="sistema_freno_pastillas" id="sistema_freno_pastillas">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="pastillas fuera de servicio">Pastillas fuera de servicio</option>
+                    <option value="pastillas desgastadas">Pastillas desgastadas</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="ventilador_recinto">Ventilador del recinto (nivel de aceite bajo – sin novedad)</label>
+                <select name="ventilador_recinto" id="ventilador_recinto">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="sistema_refrigeracion">Sistema de refrigeración (líquido refrigerante bajo – sin novedad)</label>
+                <select name="sistema_refrigeracion" id="sistema_refrigeracion">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="líquido refrigerante bajo">Líquido refrigerante bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="filtro_mecanico_aceite">Filtro mecánico del aceite de motor (con novedad - sin novedad)</label>
+                <select name="filtro_mecanico_aceite" id="filtro_mecanico_aceite" onchange="toggleNovedadInput(this, 'novedad_filtro_mecanico_aceite')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_filtro_mecanico_aceite" id="novedad_filtro_mecanico_aceite" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="filtro_aire">Filtro de aire (con novedad - sin novedad)</label>
+                <select name="filtro_aire" id="filtro_aire" onchange="toggleNovedadInput(this, 'novedad_filtro_aire')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_filtro_aire" id="novedad_filtro_aire" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="tapa_recinto">Tapa del recinto (con novedad - sin novedad)</label>
+                <select name="tapa_recinto" id="tapa_recinto" onchange="toggleNovedadInput(this, 'novedad_tapa_recinto')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_tapa_recinto" id="novedad_tapa_recinto" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="rejilla_admision_aire">Rejilla de admisión de aire (con novedad - sin novedad)</label>
+                <select name="rejilla_admision_aire" id="rejilla_admision_aire" onchange="toggleNovedadInput(this, 'novedad_rejilla_admision_aire')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_rejilla_admision_aire" id="novedad_rejilla_admision_aire" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
 
-        <a href="{% url 'novedades_tanque' tanque.id %}" class="btn btn-secondary">Volver</a>
+            <!-- Sistema de rodamiento -->
+            <h2>Sistema de rodamiento</h2>
+            <div class="input-group">
+                <label for="corona_rueda_tractora">Corona de rueda tractora (fuera de servicio – desgastada – sin novedad)</label>
+                <select name="corona_rueda_tractora" id="corona_rueda_tractora">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="desgastada">Desgastada</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="rueda_tractora_aceite">Rueda tractora (nivel de aceite bajo – sin novedad)</label>
+                <select name="rueda_tractora_aceite" id="rueda_tractora_aceite">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="oruga">Oruga (tensión baja – tensión óptima)</label>
+                <select name="oruga" id="oruga">
+                    <option value="tensión óptima">Tensión óptima</option>
+                    <option value="tensión baja">Tensión baja</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="rueda_tensora_masas_aceite">Rueda tensora y masas (nivel de aceite bajo – sin novedad)</label>
+                <select name="rueda_tensora_masas_aceite" id="rueda_tensora_masas_aceite">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="rueda_tensora_masas_caucho">Rueda tensora y masas (sin caucho – caucho desgastado – sin novedad)</label>
+                <select name="rueda_tensora_masas_caucho" id="rueda_tensora_masas_caucho">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="sin caucho">Sin caucho</option>
+                    <option value="caucho desgastado">Caucho desgastado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="rodillos_apoyo_aceite">Rodillos de apoyo (nivel de aceite bajo – sin novedad)</label>
+                <select name="rodillos_apoyo_aceite" id="rodillos_apoyo_aceite">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="rodillos_apoyo_caucho">Rodillos de apoyo (sin caucho – caucho desgastado – sin novedad)</label>
+                <select name="rodillos_apoyo_caucho" id="rodillos_apoyo_caucho">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="sin caucho">Sin caucho</option>
+                    <option value="caucho desgastado">Caucho desgastado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="amortiguadores_soportes">Amortiguadores y soportes (con novedad - sin novedad)</label>
+                <select name="amortiguadores_soportes" id="amortiguadores_soportes" onchange="toggleNovedadInput(this, 'novedad_amortiguadores_soportes')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_amortiguadores_soportes" id="novedad_amortiguadores_soportes" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+
+            <!-- Chasis -->
+            <h2>Chasis</h2>
+            <div class="input-group">
+                <label for="chapas_cubre_orugas_faldones">Chapas cubre orugas y faldones (con novedad - sin novedad)</label>
+                <select name="chapas_cubre_orugas_faldones" id="chapas_cubre_orugas_faldones" onchange="toggleNovedadInput(this, 'novedad_chapas_cubre_orugas_faldones')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_chapas_cubre_orugas_faldones" id="novedad_chapas_cubre_orugas_faldones" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="potes_lanza_fumigenos">Potes lanza fumígenos (fuera de servicio – sin novedad)</label>
+                <select name="potes_lanza_fumigenos" id="potes_lanza_fumigenos">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="soportes_lote_abordo_exterior">Soportes de sujeción del lote de abordo exterior (con novedad - sin novedad)</label>
+                <select name="soportes_lote_abordo_exterior" id="soportes_lote_abordo_exterior" onchange="toggleNovedadInput(this, 'novedad_soportes_lote_abordo_exterior')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_soportes_lote_abordo_exterior" id="novedad_soportes_lote_abordo_exterior" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="junta_goma_escotilla_escape">Junta de goma de escotilla de escape (falta – desgastada – sin novedad)</label>
+                <select name="junta_goma_escotilla_escape" id="junta_goma_escotilla_escape">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="falta">Falta</option>
+                    <option value="desgastada">Desgastada</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="escotilla_escape">Escotilla de escape (con novedad - sin novedad)</label>
+                <select name="escotilla_escape" id="escotilla_escape" onchange="toggleNovedadInput(this, 'novedad_escotilla_escape')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_escotilla_escape" id="novedad_escotilla_escape" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="escotilla_jefe_tanque">Escotilla del jefe de tanque (con novedad - sin novedad)</label>
+                <select name="escotilla_jefe_tanque" id="escotilla_jefe_tanque" onchange="toggleNovedadInput(this, 'novedad_escotilla_jefe_tanque')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_escotilla_jefe_tanque" id="novedad_escotilla_jefe_tanque" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="escotilla_conductor">Escotilla del conductor (con novedad - sin novedad)</label>
+                <select name="escotilla_conductor" id="escotilla_conductor" onchange="toggleNovedadInput(this, 'novedad_escotilla_conductor')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_escotilla_conductor" id="novedad_escotilla_conductor" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="escotilla_carga">Escotilla de carga (con novedad - sin novedad)</label>
+                <select name="escotilla_carga" id="escotilla_carga" onchange="toggleNovedadInput(this, 'novedad_escotilla_carga')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_escotilla_carga" id="novedad_escotilla_carga" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="tapas_inspeccion">Tapas de inspección (con novedad - sin novedad)</label>
+                <select name="tapas_inspeccion" id="tapas_inspeccion" onchange="toggleNovedadInput(this, 'novedad_tapas_inspeccion')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_tapas_inspeccion" id="novedad_tapas_inspeccion" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+
+            <!-- Sistema Eléctrico -->
+            <h2>Sistema Eléctrico</h2>
+            <div class="input-group">
+                <label for="bocina">Bocina (fuera de servicio – sin novedad)</label>
+                <select name="bocina" id="bocina">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="balizas">Balizas (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="balizas" id="balizas">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="luces_posicion">Luces de posición (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="luces_posicion" id="luces_posicion">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="luces_giro">Luces de giro (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="luces_giro" id="luces_giro">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="luz_alta_baja">Luz alta y baja (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="luz_alta_baja" id="luz_alta_baja">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="luz_freno">Luz de freno (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="luz_freno" id="luz_freno">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="luces_combate">Sistema de luces de combate (fuera de servicio – sin novedad)</label>
+                <select name="luces_combate" id="luces_combate">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="ojos_gato">Ojos de gatos posteriores (falta – desgastado – sin novedad)</label>
+                <select name="ojos_gato" id="ojos_gato">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="falta">Falta</option>
+                    <option value="desgastado">Desgastado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="freno_servicio">Freno de servicio (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="freno_servicio" id="freno_servicio">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="iluminacion_interior">Iluminación interior (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="iluminacion_interior" id="iluminacion_interior">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="bombas_achique">Bombas de achique (fuera de servicio – sin novedad)</label>
+                <select name="bombas_achique" id="bombas_achique">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+
+            <!-- Sistema de escape -->
+            <h2>Sistema de escape</h2>
+            <div class="input-group">
+                <label for="cano_escape">Caño de escape (con novedad - sin novedad)</label>
+                <select name="cano_escape" id="cano_escape" onchange="toggleNovedadInput(this, 'novedad_cano_escape')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_cano_escape" id="novedad_cano_escape" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="multiple_escape">Múltiple de escape (con novedad - sin novedad)</label>
+                <select name="multiple_escape" id="multiple_escape" onchange="toggleNovedadInput(this, 'novedad_multiple_escape')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_multiple_escape" id="novedad_multiple_escape" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <a href="{% url 'dashboard_seccion' tanque.seccion.id %}" class="btn btn-secondary">Volver</a>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>
