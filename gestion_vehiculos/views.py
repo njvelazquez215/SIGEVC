@@ -327,11 +327,128 @@ class TablaControl1View(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def post(self, request, tanque_id):
         tanque = get_object_or_404(Tanque, id=tanque_id)
-        # Aquí puedes manejar la lógica de guardar las novedades
-        # Puedes guardar los datos en el modelo Novedad o en otro modelo según la estructura de tu aplicación
-        # Ejemplo:
-        # motor_aceite = request.POST.get('motor_aceite')
-        # novedad_motor_aceite = request.POST.get('novedad_motor_aceite')
+
+        # Coeficientes asignados a cada opción
+        coeficientes = {
+            'sin novedad': 0,
+            'nivel de aceite bajo': 2,
+            'requiere service 60': 4,
+            'requiere service 120': 8,
+            'pastillas fuera de servicio': 5,
+            'pastillas desgastadas': 2,
+            'con novedad': 3,
+            'falta': 4,
+            'desgastado': 2,
+            'fuera de servicio': 8,
+            'servicio limitado': 4,
+            'tensión baja': 3,
+            'tensión óptima': 0,
+        }
+
+        # Obtención de los valores del formulario
+        motor_aceite = request.POST.get('motor_aceite', 'sin novedad')
+        motor_service = request.POST.get('motor_service', 'sin novedad')
+        caja_aceite = request.POST.get('caja_aceite', 'sin novedad')
+        caja_service = request.POST.get('caja_service', 'sin novedad')
+        sistema_freno_aceite = request.POST.get('sistema_freno_aceite', 'sin novedad')
+        sistema_freno_pastillas = request.POST.get('sistema_freno_pastillas', 'sin novedad')
+        ventilador_aceite = request.POST.get('ventilador_aceite', 'sin novedad')
+        sistema_refrigeracion = request.POST.get('sistema_refrigeracion', 'sin novedad')
+        filtro_mecanico_aceite = request.POST.get('filtro_mecanico_aceite', 'sin novedad')
+        filtro_aire = request.POST.get('filtro_aire', 'sin novedad')
+        tapa_recinto = request.POST.get('tapa_recinto', 'sin novedad')
+        rejilla_admision_aire = request.POST.get('rejilla_admision_aire', 'sin novedad')
+        corona_tractora = request.POST.get('corona_tractora', 'sin novedad')
+        rueda_tractora_aceite = request.POST.get('rueda_tractora_aceite', 'sin novedad')
+        oruga_tension = request.POST.get('oruga_tension', 'sin novedad')
+        rueda_tensora_aceite = request.POST.get('rueda_tensora_aceite', 'sin novedad')
+        rueda_tensora_caucho = request.POST.get('rueda_tensora_caucho', 'sin novedad')
+        rodillos_apoyo_aceite = request.POST.get('rodillos_apoyo_aceite', 'sin novedad')
+        rodillos_apoyo_caucho = request.POST.get('rodillos_apoyo_caucho', 'sin novedad')
+        amortiguadores_soportes = request.POST.get('amortiguadores_soportes', 'sin novedad')
+        chapas_cubre_orugas = request.POST.get('chapas_cubre_orugas', 'sin novedad')
+        potes_lanza_fumigenos = request.POST.get('potes_lanza_fumigenos', 'sin novedad')
+        soportes_lote_abordo = request.POST.get('soportes_lote_abordo', 'sin novedad')
+        junta_goma_escotilla_escape = request.POST.get('junta_goma_escotilla_escape', 'sin novedad')
+        escotilla_escape = request.POST.get('escotilla_escape', 'sin novedad')
+        escotilla_jefe_tanque = request.POST.get('escotilla_jefe_tanque', 'sin novedad')
+        escotilla_conductor = request.POST.get('escotilla_conductor', 'sin novedad')
+        escotilla_carga = request.POST.get('escotilla_carga', 'sin novedad')
+        tapas_inspeccion = request.POST.get('tapas_inspeccion', 'sin novedad')
+        bocina = request.POST.get('bocina', 'sin novedad')
+        balizas = request.POST.get('balizas', 'sin novedad')
+        luces_posicion = request.POST.get('luces_posicion', 'sin novedad')
+        luces_giro = request.POST.get('luces_giro', 'sin novedad')
+        luz_alta_baja = request.POST.get('luz_alta_baja', 'sin novedad')
+        luz_freno = request.POST.get('luz_freno', 'sin novedad')
+        luces_combate = request.POST.get('luces_combate', 'sin novedad')
+        ojos_gatos_posteriores = request.POST.get('ojos_gatos_posteriores', 'sin novedad')
+        freno_servicio = request.POST.get('freno_servicio', 'sin novedad')
+        iluminacion_interior = request.POST.get('iluminacion_interior', 'sin novedad')
+        bombas_achique = request.POST.get('bombas_achique', 'sin novedad')
+        cano_escape = request.POST.get('cano_escape', 'sin novedad')
+        multiple_escape = request.POST.get('multiple_escape', 'sin novedad')
+
+        # Cálculo del estado del tanque
+        puntuacion = (
+            coeficientes[motor_aceite] +
+            coeficientes[motor_service] +
+            coeficientes[caja_aceite] +
+            coeficientes[caja_service] +
+            coeficientes[sistema_freno_aceite] +
+            coeficientes[sistema_freno_pastillas] +
+            coeficientes[ventilador_aceite] +
+            coeficientes[sistema_refrigeracion] +
+            coeficientes[filtro_mecanico_aceite] +
+            coeficientes[filtro_aire] +
+            coeficientes[tapa_recinto] +
+            coeficientes[rejilla_admision_aire] +
+            coeficientes[corona_tractora] +
+            coeficientes[rueda_tractora_aceite] +
+            coeficientes[oruga_tension] +
+            coeficientes[rueda_tensora_aceite] +
+            coeficientes[rueda_tensora_caucho] +
+            coeficientes[rodillos_apoyo_aceite] +
+            coeficientes[rodillos_apoyo_caucho] +
+            coeficientes[amortiguadores_soportes] +
+            coeficientes[chapas_cubre_orugas] +
+            coeficientes[potes_lanza_fumigenos] +
+            coeficientes[soportes_lote_abordo] +
+            coeficientes[junta_goma_escotilla_escape] +
+            coeficientes[escotilla_escape] +
+            coeficientes[escotilla_jefe_tanque] +
+            coeficientes[escotilla_conductor] +
+            coeficientes[escotilla_carga] +
+            coeficientes[tapas_inspeccion] +
+            coeficientes[bocina] +
+            coeficientes[balizas] +
+            coeficientes[luces_posicion] +
+            coeficientes[luces_giro] +
+            coeficientes[luz_alta_baja] +
+            coeficientes[luz_freno] +
+            coeficientes[luces_combate] +
+            coeficientes[ojos_gatos_posteriores] +
+            coeficientes[freno_servicio] +
+            coeficientes[iluminacion_interior] +
+            coeficientes[bombas_achique] +
+            coeficientes[cano_escape] +
+            coeficientes[multiple_escape]
+        )
+
+        # Determinación del estado basado en la puntuación
+        if 'requiere service 120' in [motor_service, caja_service]:
+            tanque.estado = 'Fuera de servicio'
+        elif 'requiere service 60' in [motor_service, caja_service]:
+            tanque.estado = 'Servicio limitado'
+        elif puntuacion >= 15:  # Umbral para 'Fuera de servicio'
+            tanque.estado = 'Fuera de servicio'
+        elif 5 <= puntuacion < 15:  # Umbral para 'Servicio limitado'
+            tanque.estado = 'Servicio limitado'
+        else:
+            tanque.estado = 'En servicio'
+
+        tanque.save()
+
         return redirect('novedades_tanque', tanque_id=tanque.id)
 
 class TablaControl2View(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -344,6 +461,113 @@ class TablaControl2View(LoginRequiredMixin, UserPassesTestMixin, View):
         tanque = get_object_or_404(Tanque, id=tanque_id)
         return render(request, self.template_name, {'tanque': tanque})
 
+    def post(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+
+        # Coeficientes asignados a cada opción
+        coeficientes = {
+            'sin novedad': 0,
+            'con novedad': 3,
+            'falta': 4,
+            'desgastado': 2,
+            'fuera de servicio': 8,
+            'servicio limitado': 4,
+        }
+
+        # Obtención de los valores del formulario
+        sicte = request.POST.get('sicte', 'sin novedad')
+        periscopio_tzf_la = request.POST.get('periscopio_tzf_la', 'sin novedad')
+        aparato_tzf_la = request.POST.get('aparato_tzf_la', 'sin novedad')
+        soporte_tres_a = request.POST.get('soporte_tres_a', 'sin novedad')
+        cartucho_des_humificador = request.POST.get('cartucho_des_humificador', 'sin novedad')
+        oculares_ventanas = request.POST.get('oculares_ventanas', 'sin novedad')
+        graduacion_diotrica = request.POST.get('graduacion_diotrica', 'sin novedad')
+        gomas_oculares = request.POST.get('gomas_oculares', 'sin novedad')
+        apoya_frente = request.POST.get('apoya_frente', 'sin novedad')
+        perillas_movimiento = request.POST.get('perillas_movimiento', 'sin novedad')
+        caja_electronica = request.POST.get('caja_electronica', 'sin novedad')
+        cbdt = request.POST.get('cbdt', 'sin novedad')
+        disparador = request.POST.get('disparador', 'sin novedad')
+        protector_retroceso = request.POST.get('protector_retroceso', 'sin novedad')
+        afuste_ametcx = request.POST.get('afuste_ametcx', 'sin novedad')
+        cuadrante_nivel = request.POST.get('cuadrante_nivel', 'sin novedad')
+        iluminacion_interior_plafonier = request.POST.get('iluminacion_interior_plafonier', 'sin novedad')
+        enclavamiento_asiento = request.POST.get('enclavamiento_asiento', 'sin novedad')
+        soporte_episcopios = request.POST.get('soporte_episcopios', 'sin novedad')
+        conexion_cables_baterias = request.POST.get('conexion_cables_baterias', 'sin novedad')
+        tapa_compartimiento_baterias = request.POST.get('tapa_compartimiento_baterias', 'sin novedad')
+        escotilla_j_tan = request.POST.get('escotilla_j_tan', 'sin novedad')
+        afuste_j_tan = request.POST.get('afuste_j_tan', 'sin novedad')
+        contenedor_vainas = request.POST.get('contenedor_vainas', 'sin novedad')
+        burletes_goma = request.POST.get('burletes_goma', 'sin novedad')
+        conexiones_hidraulicas = request.POST.get('conexiones_hidraulicas', 'sin novedad')
+        potes_lanzafumigenos = request.POST.get('potes_lanzafumigenos', 'sin novedad')
+        cartucho_antihumedad = request.POST.get('cartucho_antihumedad', 'sin novedad')
+        panel_mando_j_tan = request.POST.get('panel_mando_j_tan', 'sin novedad')
+        panel_mando_ap = request.POST.get('panel_mando_ap', 'sin novedad')
+        panel_mando_carg = request.POST.get('panel_mando_carg', 'sin novedad')
+        reloj_azimutal = request.POST.get('reloj_azimutal', 'sin novedad')
+        accesorios_provisiones = request.POST.get('accesorios_provisiones', 'sin novedad')
+        tuberias_mangueras = request.POST.get('tuberias_mangueras', 'sin novedad')
+        tanque_grupo_bomba = request.POST.get('tanque_grupo_bomba', 'sin novedad')
+        accionamiento_manual_altura = request.POST.get('accionamiento_manual_altura', 'sin novedad')
+        accionamiento_manual_direccion = request.POST.get('accionamiento_manual_direccion', 'sin novedad')
+        tapas_inspeccion = request.POST.get('tapas_inspeccion', 'sin novedad')
+
+        # Cálculo del estado del tanque
+        puntuacion = (
+            coeficientes[sicte] +
+            coeficientes[periscopio_tzf_la] +
+            coeficientes[aparato_tzf_la] +
+            coeficientes[soporte_tres_a] +
+            coeficientes[cartucho_des_humificador] +
+            coeficientes[oculares_ventanas] +
+            coeficientes[graduacion_diotrica] +
+            coeficientes[gomas_oculares] +
+            coeficientes[apoya_frente] +
+            coeficientes[perillas_movimiento] +
+            coeficientes[caja_electronica] +
+            coeficientes[cbdt] +
+            coeficientes[disparador] +
+            coeficientes[protector_retroceso] +
+            coeficientes[afuste_ametcx] +
+            coeficientes[cuadrante_nivel] +
+            coeficientes[iluminacion_interior_plafonier] +
+            coeficientes[enclavamiento_asiento] +
+            coeficientes[soporte_episcopios] +
+            coeficientes[conexion_cables_baterias] +
+            coeficientes[tapa_compartimiento_baterias] +
+            coeficientes[escotilla_j_tan] +
+            coeficientes[afuste_j_tan] +
+            coeficientes[contenedor_vainas] +
+            coeficientes[burletes_goma] +
+            coeficientes[conexiones_hidraulicas] +
+            coeficientes[potes_lanzafumigenos] +
+            coeficientes[cartucho_antihumedad] +
+            coeficientes[panel_mando_j_tan] +
+            coeficientes[panel_mando_ap] +
+            coeficientes[panel_mando_carg] +
+            coeficientes[reloj_azimutal] +
+            coeficientes[accesorios_provisiones] +
+            coeficientes[tuberias_mangueras] +
+            coeficientes[tanque_grupo_bomba] +
+            coeficientes[accionamiento_manual_altura] +
+            coeficientes[accionamiento_manual_direccion] +
+            coeficientes[tapas_inspeccion]
+        )
+
+        # Determinación del estado basado en la puntuación
+        if puntuacion >= 15:  # Umbral para 'Fuera de servicio'
+            tanque.estado = 'Fuera de servicio'
+        elif 5 <= puntuacion < 15:  # Umbral para 'Servicio limitado'
+            tanque.estado = 'Servicio limitado'
+        else:
+            tanque.estado = 'En servicio'
+
+        tanque.save()
+
+        return redirect('novedades_tanque', tanque_id=tanque.id)
+
 class TablaControl3View(LoginRequiredMixin, UserPassesTestMixin, View):
     template_name = 'gestion_vehiculos/tabla_control_3.html'
 
@@ -353,3 +577,96 @@ class TablaControl3View(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, tanque_id):
         tanque = get_object_or_404(Tanque, id=tanque_id)
         return render(request, self.template_name, {'tanque': tanque})
+
+    def post(self, request, tanque_id):
+        tanque = get_object_or_404(Tanque, id=tanque_id)
+
+        # Coeficientes asignados a cada opción
+        coeficientes = {
+            'sin novedad': 0,
+            'con novedad': 3,
+            'falta': 4,
+            'desgastado': 2,
+            'fuera de servicio': 8,
+            'servicio limitado': 4,
+        }
+
+        # Obtención de los valores del formulario
+        motor_horas = request.POST.get('motor_horas', 0)
+        caja_cambios_horas = request.POST.get('caja_cambios_horas', 0)
+        filtro_ventiladores = request.POST.get('filtro_ventiladores', 'sin novedad')
+        filtro_combustible = request.POST.get('filtro_combustible', 'sin novedad')
+        malla_filtrante = request.POST.get('malla_filtrante', 'sin novedad')
+        oruga = request.POST.get('oruga', 'sin novedad')
+        uniones_laterales = request.POST.get('uniones_laterales', 'sin novedad')
+        ruedas_tensoras = request.POST.get('ruedas_tensoras', 'sin novedad')
+        tapas_compartimiento = request.POST.get('tapas_compartimiento', 'sin novedad')
+        calefactor_conductor = request.POST.get('calefactor_conductor', 'sin novedad')
+        freno_servicio = request.POST.get('freno_servicio', 'sin novedad')
+        asiento_ruta = request.POST.get('asiento_ruta', 'sin novedad')
+        sistema_incendio = request.POST.get('sistema_incendio', 'sin novedad')
+        soporte_municion = request.POST.get('soporte_municion', 'sin novedad')
+        botellones_incendio = request.POST.get('botellones_incendio', 'sin novedad')
+        vehiculo_general = request.POST.get('vehiculo_general', 'sin novedad')
+        aisladores_antena = request.POST.get('aisladores_antena', 'sin novedad')
+        escotilla_emergencia = request.POST.get('escotilla_emergencia', 'sin novedad')
+        tablero_precaleo = request.POST.get('tablero_precaleo', 'sin novedad')
+        cables_bornes_torre = request.POST.get('cables_bornes_torre', 'sin novedad')
+        cables_bornes_chasis = request.POST.get('cables_bornes_chasis', 'sin novedad')
+        equipos_radio = request.POST.get('equipos_radio', 'sin novedad')
+        laringofonos = request.POST.get('laringofonos', 'sin novedad')
+        cajas_pecho = request.POST.get('cajas_pecho', 'sin novedad')
+        funcionamiento_ic = request.POST.get('funcionamiento_ic', 'sin novedad')
+        comprobacion_red = request.POST.get('comprobacion_red', 'sin novedad')
+        telefono_cola = request.POST.get('telefono_cola', 'sin novedad')
+        aisladores_antena_comunicaciones = request.POST.get('aisladores_antena_comunicaciones', 'sin novedad')
+        dispositivo_apertura = request.POST.get('dispositivo_apertura', 'sin novedad')
+        frontis_lona = request.POST.get('frontis_lona', 'sin novedad')
+        compensador_frenos = request.POST.get('compensador_frenos', 'sin novedad')
+        extractor_gases = request.POST.get('extractor_gases', 'sin novedad')
+
+        # Cálculo del estado del tanque
+        puntuacion = (
+            coeficientes[filtro_ventiladores] +
+            coeficientes[filtro_combustible] +
+            coeficientes[malla_filtrante] +
+            coeficientes[oruga] +
+            coeficientes[uniones_laterales] +
+            coeficientes[ruedas_tensoras] +
+            coeficientes[tapas_compartimiento] +
+            coeficientes[calefactor_conductor] +
+            coeficientes[freno_servicio] +
+            coeficientes[asiento_ruta] +
+            coeficientes[sistema_incendio] +
+            coeficientes[soporte_municion] +
+            coeficientes[botellones_incendio] +
+            coeficientes[vehiculo_general] +
+            coeficientes[aisladores_antena] +
+            coeficientes[escotilla_emergencia] +
+            coeficientes[tablero_precaleo] +
+            coeficientes[cables_bornes_torre] +
+            coeficientes[cables_bornes_chasis] +
+            coeficientes[equipos_radio] +
+            coeficientes[laringofonos] +
+            coeficientes[cajas_pecho] +
+            coeficientes[funcionamiento_ic] +
+            coeficientes[comprobacion_red] +
+            coeficientes[telefono_cola] +
+            coeficientes[aisladores_antena_comunicaciones] +
+            coeficientes[dispositivo_apertura] +
+            coeficientes[frontis_lona] +
+            coeficientes[compensador_frenos] +
+            coeficientes[extractor_gases]
+        )
+
+        # Determinación del estado basado en la puntuación
+        if puntuacion >= 15:  # Umbral para 'Fuera de servicio'
+            tanque.estado = 'Fuera de servicio'
+        elif 5 <= puntuacion < 15:  # Umbral para 'Servicio limitado'
+            tanque.estado = 'Servicio limitado'
+        else:
+            tanque.estado = 'En servicio'
+
+        tanque.save()
+
+        return redirect('novedades_tanque', tanque_id=tanque.id)
