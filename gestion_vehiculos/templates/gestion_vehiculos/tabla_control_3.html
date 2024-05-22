@@ -6,7 +6,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
             padding: 20px;
             margin: 0;
         }
@@ -18,34 +17,299 @@
         main {
             padding: 20px;
         }
-        .btn {
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, textarea, input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        button {
             padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        .btn-secondary:hover {
-            opacity: 0.8;
+            margin-top: 20px;
         }
     </style>
+    <script>
+        function toggleNovedadInput(selectElement, inputId) {
+            var inputElement = document.getElementById(inputId);
+            if (selectElement.value === "con novedad") {
+                inputElement.style.display = "block";
+            } else {
+                inputElement.style.display = "none";
+            }
+        }
+    </script>
 </head>
 <body>
     <header>
         <h1>Tabla de Control Nro 3</h1>
     </header>
     <main>
-        <h2>NI: {{ tanque.NI }}</h2>
-        <p><strong>Estado:</strong> {{ tanque.estado }}</p>
-        <p><strong>Responsable:</strong> {{ tanque.responsable }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <!-- Grupo Motopropulsor -->
+            <div class="form-group">
+                <label for="motor_horas">Motor (Cantidad de horas)</label>
+                <input type="number" name="motor_horas" id="motor_horas">
+            </div>
+            <div class="form-group">
+                <label for="caja_cambios_horas">Caja de Cambios (Cantidad de horas)</label>
+                <input type="number" name="caja_cambios_horas" id="caja_cambios_horas">
+            </div>
+            <div class="form-group">
+                <label for="filtro_aceite_ventiladores">Filtro mecánico de aceite de ventiladores (con novedad - sin novedad)</label>
+                <select name="filtro_aceite_ventiladores" id="filtro_aceite_ventiladores" onchange="toggleNovedadInput(this, 'novedad_filtro_aceite_ventiladores')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_filtro_aceite_ventiladores" id="novedad_filtro_aceite_ventiladores" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="filtro_combustible">Filtro mecánico de combustible (con novedad - sin novedad)</label>
+                <select name="filtro_combustible" id="filtro_combustible" onchange="toggleNovedadInput(this, 'novedad_filtro_combustible')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_filtro_combustible" id="novedad_filtro_combustible" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="malla_filtrante_combustible">Malla filtrante del tanque de combustible (con novedad - sin novedad)</label>
+                <select name="malla_filtrante_combustible" id="malla_filtrante_combustible" onchange="toggleNovedadInput(this, 'novedad_malla_filtrante_combustible')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_malla_filtrante_combustible" id="novedad_malla_filtrante_combustible" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
 
-        <!-- Aquí se implementará la checklist -->
+            <!-- Sistema de rodamiento -->
+            <div class="form-group">
+                <label for="oruga">Oruga (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="oruga" id="oruga">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="uniones_laterales">Uniones laterales (con novedad - sin novedad)</label>
+                <select name="uniones_laterales" id="uniones_laterales" onchange="toggleNovedadInput(this, 'novedad_uniones_laterales')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_uniones_laterales" id="novedad_uniones_laterales" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="ruedas_tensora_rodamiento">Ruedas tensoras y de rodamiento (sin caucho – caucho desgastado – sin novedad)</label>
+                <select name="ruedas_tensora_rodamiento" id="ruedas_tensora_rodamiento">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="caucho desgastado">Caucho desgastado</option>
+                    <option value="sin caucho">Sin caucho</option>
+                </select>
+            </div>
 
-        <a href="{% url 'novedades_tanque' tanque.id %}" class="btn btn-secondary">Volver</a>
+            <!-- Chasis -->
+            <div class="form-group">
+                <label for="tapas_baterias">Tapas de compartimiento de baterías (con novedad - sin novedad)</label>
+                <select name="tapas_baterias" id="tapas_baterias" onchange="toggleNovedadInput(this, 'novedad_tapas_baterias')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_tapas_baterias" id="novedad_tapas_baterias" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="calefactor_conductor">Calefactor del conductor (fuera de servicio – sin novedad)</label>
+                <select name="calefactor_conductor" id="calefactor_conductor">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="freno_servicio_estacionamiento">Freno de servicio y de estacionamiento (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="freno_servicio_estacionamiento" id="freno_servicio_estacionamiento">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="asiento_ruta">Asiento de ruta (con novedad - sin novedad)</label>
+                <select name="asiento_ruta" id="asiento_ruta" onchange="toggleNovedadInput(this, 'novedad_asiento_ruta')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_asiento_ruta" id="novedad_asiento_ruta" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="sistema_incendio">Sistema contra incendio (con novedad - sin novedad)</label>
+                <select name="sistema_incendio" id="sistema_incendio" onchange="toggleNovedadInput(this, 'novedad_sistema_incendio')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_sistema_incendio" id="novedad_sistema_incendio" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="soporte_municion">Soporte de munición 105 mm (con novedad - sin novedad)</label>
+                <select name="soporte_municion" id="soporte_municion" onchange="toggleNovedadInput(this, 'novedad_soporte_municion')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_soporte_municion" id="novedad_soporte_municion" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="botellones_incendio">Botellones contra incendio (con novedad - sin novedad)</label>
+                <select name="botellones_incendio" id="botellones_incendio" onchange="toggleNovedadInput(this, 'novedad_botellones_incendio')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_botellones_incendio" id="novedad_botellones_incendio" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="vehiculo_general">Vehiculo en general (con novedad - sin novedad)</label>
+                <select name="vehiculo_general" id="vehiculo_general" onchange="toggleNovedadInput(this, 'novedad_vehiculo_general')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_vehiculo_general" id="novedad_vehiculo_general" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="aisladores_antena">Aisladores de antena (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="aisladores_antena" id="aisladores_antena">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="escotilla_emergencia">Escotilla de emergencia (con novedad - sin novedad)</label>
+                <select name="escotilla_emergencia" id="escotilla_emergencia" onchange="toggleNovedadInput(this, 'novedad_escotilla_emergencia')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_escotilla_emergencia" id="novedad_escotilla_emergencia" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+
+            <!-- Sistema Eléctrico -->
+            <div class="form-group">
+                <label for="tablero_bujias">Tablero y bujías de pre caldeo (con novedad - sin novedad)</label>
+                <select name="tablero_bujias" id="tablero_bujias" onchange="toggleNovedadInput(this, 'novedad_tablero_bujias')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_tablero_bujias" id="novedad_tablero_bujias" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="cables_bornes_torre">Estado de cables y bornes de baterías torre (con novedad - sin novedad)</label>
+                <select name="cables_bornes_torre" id="cables_bornes_torre" onchange="toggleNovedadInput(this, 'novedad_cables_bornes_torre')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_cables_bornes_torre" id="novedad_cables_bornes_torre" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="cables_bornes_chasis">Estado de cables y bornes de baterías chasis (con novedad - sin novedad)</label>
+                <select name="cables_bornes_chasis" id="cables_bornes_chasis" onchange="toggleNovedadInput(this, 'novedad_cables_bornes_chasis')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_cables_bornes_chasis" id="novedad_cables_bornes_chasis" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+
+            <!-- Comunicaciones -->
+            <div class="form-group">
+                <label for="equipos_radio">Equipos de radio (con novedad - sin novedad)</label>
+                <select name="equipos_radio" id="equipos_radio" onchange="toggleNovedadInput(this, 'novedad_equipos_radio')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_equipos_radio" id="novedad_equipos_radio" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="laringofonos">Laringófonos (fuera de servicio - sin novedad)</label>
+                <select name="laringofonos" id="laringofonos">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cajas_pecho">Cajas de pecho (fuera de servicio - sin novedad)</label>
+                <select name="cajas_pecho" id="cajas_pecho">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="funcionamiento_ic">Funcionamiento I C (fuera de servicio - sin novedad)</label>
+                <select name="funcionamiento_ic" id="funcionamiento_ic">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comprobacion_red">Comprobación de la red (con novedad - sin novedad)</label>
+                <select name="comprobacion_red" id="comprobacion_red" onchange="toggleNovedadInput(this, 'novedad_comprobacion_red')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_comprobacion_red" id="novedad_comprobacion_red" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="telefono_cola">Teléfono de cola (fuera de servicio - sin novedad)</label>
+                <select name="telefono_cola" id="telefono_cola">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="aisladores_antena_comunicaciones">Aisladores de antena (fuera de servicio - sin novedad)</label>
+                <select name="aisladores_antena_comunicaciones" id="aisladores_antena_comunicaciones">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+
+            <!-- Armamento -->
+            <div class="form-group">
+                <label for="dispositivo_cierre">Dispositivo apertura automática de cierre (con novedad - sin novedad)</label>
+                <select name="dispositivo_cierre" id="dispositivo_cierre" onchange="toggleNovedadInput(this, 'novedad_dispositivo_cierre')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_dispositivo_cierre" id="novedad_dispositivo_cierre" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="frontis_lona">Frontis y lona de cubre frontis (con novedad - sin novedad)</label>
+                <select name="frontis_lona" id="frontis_lona" onchange="toggleNovedadInput(this, 'novedad_frontis_lona')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_frontis_lona" id="novedad_frontis_lona" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="compensador_frenos">Compensador y frenos de tiro (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="compensador_frenos" id="compensador_frenos">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="equipo_extractor_gases">Equipo de extractor de gases (fuera de servicio – servicio limitado - sin novedad)</label>
+                <select name="equipo_extractor_gases" id="equipo_extractor_gases">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <a href="{% url 'dashboard_seccion' tanque.seccion.id %}" class="btn btn-secondary">Volver</a>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>

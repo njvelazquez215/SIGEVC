@@ -18,34 +18,372 @@
         main {
             padding: 20px;
         }
-        .btn {
-            padding: 10px 20px;
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
             border: none;
-            border-radius: 5px;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
             cursor: pointer;
-            font-size: 16px;
         }
         .btn-secondary {
             background-color: #6c757d;
             color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
         }
-        .btn-secondary:hover {
-            opacity: 0.8;
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
         }
     </style>
+    <script>
+        function toggleNovedadInput(selectElement, novedadId) {
+            var novedadInput = document.getElementById(novedadId);
+            if (selectElement.value === 'con novedad') {
+                novedadInput.style.display = 'block';
+            } else {
+                novedadInput.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
     <header>
         <h1>Tabla de Control Nro 2</h1>
     </header>
     <main>
-        <h2>NI: {{ tanque.NI }}</h2>
-        <p><strong>Estado:</strong> {{ tanque.estado }}</p>
-        <p><strong>Responsable:</strong> {{ tanque.responsable }}</p>
+        <form method="post">
+            {% csrf_token %}
 
-        <!-- Aquí se implementará la checklist -->
+            <!-- Sistema eléctrico -->
+            <div class="form-group">
+                <label for="sicte">SICTE manejado por el Ap y por el J Tan</label>
+                <select name="sicte" id="sicte" onchange="toggleNovedadInput(this, 'novedad_sicte')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_sicte" id="novedad_sicte" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tzf_la">Periscopio de punteria TZF-LA</label>
+                <select name="tzf_la" id="tzf_la" onchange="toggleNovedadInput(this, 'novedad_tzf_la')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_tzf_la" id="novedad_tzf_la" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="aparato_tzf_la">Aparato TZF-LA</label>
+                <select name="aparato_tzf_la" id="aparato_tzf_la" onchange="toggleNovedadInput(this, 'novedad_aparato_tzf_la')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_aparato_tzf_la" id="novedad_aparato_tzf_la" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="soporte_tres_a">Soporte TRES A (3ra)</label>
+                <select name="soporte_tres_a" id="soporte_tres_a" onchange="toggleNovedadInput(this, 'novedad_soporte_tres_a')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_soporte_tres_a" id="novedad_soporte_tres_a" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="cartucho_humificador">Cartucho des humificador</label>
+                <select name="cartucho_humificador" id="cartucho_humificador">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="oculares_ventanas">Oculares y ventanas </label>
+                <select name="oculares_ventanas" id="oculares_ventanas" onchange="toggleNovedadInput(this, 'novedad_oculares_ventanas')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_oculares_ventanas" id="novedad_oculares_ventanas" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="graduacion_dioptica">Graduación dióptica</label>
+                <select name="graduacion_dioptica" id="graduacion_dioptica">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="gomas_oculares">Gomas de los oculares</label>
+                <select name="gomas_oculares" id="gomas_oculares">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="desgastado">Desgastado</option>
+                    <option value="falta">Falta</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="apoya_frente">Apoya frente</label>
+                <select name="apoya_frente" id="apoya_frente">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="desgastado">Desgastado</option>
+                    <option value="falta">Falta</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="perillas_mira">Perillas para el movimiento de la línea de mira</label>
+                <select name="perillas_mira" id="perillas_mira" onchange="toggleNovedadInput(this, 'novedad_perillas_mira')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_perillas_mira" id="novedad_perillas_mira" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="caja_electronica">Caja electrónica</label>
+                <select name="caja_electronica" id="caja_electronica" onchange="toggleNovedadInput(this, 'novedad_caja_electronica')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_caja_electronica" id="novedad_caja_electronica" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="cbdt">CBDT</label>
+                <select name="cbdt" id="cbdt" onchange="toggleNovedadInput(this, 'novedad_cbdt')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_cbdt" id="novedad_cbdt" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="disparador_principal">Disparador principal y de emergencia</label>
+                <select name="disparador_principal" id="disparador_principal" onchange="toggleNovedadInput(this, 'novedad_disparador_principal')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_disparador_principal" id="novedad_disparador_principal" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="protector_retroceso">Protector con indicador de retroceso y cesto de vainas</label>
+                <select name="protector_retroceso" id="protector_retroceso" onchange="toggleNovedadInput(this, 'novedad_protector_retroceso')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_protector_retroceso" id="novedad_protector_retroceso" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="afuste_ametcx">Afuste AmetCx</label>
+                <select name="afuste_ametcx" id="afuste_ametcx" onchange="toggleNovedadInput(this, 'novedad_afuste_ametcx')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_afuste_ametcx" id="novedad_afuste_ametcx" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="cuadrante_nivel">Cuadrante de nivel</label>
+                <select name="cuadrante_nivel" id="cuadrante_nivel" onchange="toggleNovedadInput(this, 'novedad_cuadrante_nivel')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_cuadrante_nivel" id="novedad_cuadrante_nivel" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
 
-        <a href="{% url 'novedades_tanque' tanque.id %}" class="btn btn-secondary">Volver</a>
+            <!-- Torre -->
+            <div class="form-group">
+                <label for="iluminacion_interior">Iluminación interior plafonier</label>
+                <select name="iluminacion_interior" id="iluminacion_interior" onchange="toggleNovedadInput(this, 'novedad_iluminacion_interior')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_iluminacion_interior" id="novedad_iluminacion_interior" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="enclavamiento_asiento">Enclavamiento del asiento del J Tan, Ap, Cond y Carg</label>
+                <select name="enclavamiento_asiento" id="enclavamiento_asiento" onchange="toggleNovedadInput(this, 'novedad_enclavamiento_asiento')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_enclavamiento_asiento" id="novedad_enclavamiento_asiento" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="soporte_episcopios">Soporte de episcopios</label>
+                <select name="soporte_episcopios" id="soporte_episcopios" onchange="toggleNovedadInput(this, 'novedad_soporte_episcopios')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_soporte_episcopios" id="novedad_soporte_episcopios" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="conexion_cables">Conexión de los cables de baterías de chasis y torre</label>
+                <select name="conexion_cables" id="conexion_cables" onchange="toggleNovedadInput(this, 'novedad_conexion_cables')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_conexion_cables" id="novedad_conexion_cables" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tapa_compartimiento_baterias">Tapa de compartimiento de baterías</label>
+                <select name="tapa_compartimiento_baterias" id="tapa_compartimiento_baterias" onchange="toggleNovedadInput(this, 'novedad_tapa_compartimiento_baterias')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_tapa_compartimiento_baterias" id="novedad_tapa_compartimiento_baterias" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="escotilla_j_tan">Escotilla del J Tan</label>
+                <select name="escotilla_j_tan" id="escotilla_j_tan" onchange="toggleNovedadInput(this, 'novedad_escotilla_j_tan')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_escotilla_j_tan" id="novedad_escotilla_j_tan" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="afuste_amet_j_tan">Afuste Amet J Tan</label>
+                <select name="afuste_amet_j_tan" id="afuste_amet_j_tan" onchange="toggleNovedadInput(this, 'novedad_afuste_amet_j_tan')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_afuste_amet_j_tan" id="novedad_afuste_amet_j_tan" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="contenedor_vainas">Contenedor de vainas</label>
+                <select name="contenedor_vainas" id="contenedor_vainas" onchange="toggleNovedadInput(this, 'novedad_contenedor_vainas')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_contenedor_vainas" id="novedad_contenedor_vainas" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="burletes_goma">Burletes de goma</label>
+                <select name="burletes_goma" id="burletes_goma">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="desgastado">Desgastado</option>
+                    <option value="falta">Falta</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="conexiones_hidraulicas">Conexiones hidráulicas</label>
+                <select name="conexiones_hidraulicas" id="conexiones_hidraulicas" onchange="toggleNovedadInput(this, 'novedad_conexiones_hidraulicas')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_conexiones_hidraulicas" id="novedad_conexiones_hidraulicas" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="potes_lanzafumigenos">Potes lanzafumígenos</label>
+                <select name="potes_lanzafumigenos" id="potes_lanzafumigenos">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="servicio limitado">Servicio limitado</option>
+                    <option value="fuera de servicio">Fuera de servicio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cartucho_antihumedad">Cartucho antihumedad periscopio panorámico de punteria PERI-R</label>
+                <select name="cartucho_antihumedad" id="cartucho_antihumedad" onchange="toggleNovedadInput(this, 'novedad_cartucho_antihumedad')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_cartucho_antihumedad" id="novedad_cartucho_antihumedad" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="panel_mando_j_tan">Panel de mando J Tan</label>
+                <select name="panel_mando_j_tan" id="panel_mando_j_tan" onchange="toggleNovedadInput(this, 'novedad_panel_mando_j_tan')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_panel_mando_j_tan" id="novedad_panel_mando_j_tan" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="panel_mando_ap">Panel de mando Ap</label>
+                <select name="panel_mando_ap" id="panel_mando_ap" onchange="toggleNovedadInput(this, 'novedad_panel_mando_ap')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_panel_mando_ap" id="novedad_panel_mando_ap" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="panel_mando_carg">Panel de mando Carg</label>
+                <select name="panel_mando_carg" id="panel_mando_carg" onchange="toggleNovedadInput(this, 'novedad_panel_mando_carg')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_panel_mando_carg" id="novedad_panel_mando_carg" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="circulo_graduado">Circulo graduado de iluminación - Reloj AZIMUTAL</label>
+                <select name="circulo_graduado" id="circulo_graduado" onchange="toggleNovedadInput(this, 'novedad_circulo_graduado')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_circulo_graduado" id="novedad_circulo_graduado" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="accesorios_provisiones">Accesorios, provisiones y equipo de a bordo y lote exterior</label>
+                <select name="accesorios_provisiones" id="accesorios_provisiones" onchange="toggleNovedadInput(this, 'novedad_accesorios_provisiones')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_accesorios_provisiones" id="novedad_accesorios_provisiones" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tuberias_mangueras">Tuberías y mangueras del sistema hidráulico de la torre</label>
+                <select name="tuberias_mangueras" id="tuberias_mangueras">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="presenta fugas">Presenta fugas</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tanque_bomba">Tanque del grupo bomba</label>
+                <select name="tanque_bomba" id="tanque_bomba">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="nivel de aceite bajo">Nivel de aceite bajo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="accionamiento_altura">Accionamiento manual en altura</label>
+                <select name="accionamiento_altura" id="accionamiento_altura" onchange="toggleNovedadInput(this, 'novedad_accionamiento_altura')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_accionamiento_altura" id="novedad_accionamiento_altura" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="accionamiento_direccion">Accionamiento manual en dirección</label>
+                <select name="accionamiento_direccion" id="accionamiento_direccion" onchange="toggleNovedadInput(this, 'novedad_accionamiento_direccion')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_accionamiento_direccion" id="novedad_accionamiento_direccion" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+
+            <!-- Chasis -->
+            <div class="form-group">
+                <label for="tapab_inspeccion">Tapas de inspección</label>
+                <select name="tapab_inspeccion" id="tapab_inspeccion" onchange="toggleNovedadInput(this, 'novedad_tapab_inspeccion')">
+                    <option value="sin novedad">Sin novedad</option>
+                    <option value="con novedad">Con novedad</option>
+                </select>
+                <textarea name="novedad_tapab_inspeccion" id="novedad_tapab_inspeccion" style="display:none;" placeholder="Describa la novedad"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <a href="{% url 'dashboard_seccion' tanque.seccion.id %}" class="btn btn-secondary">Volver</a>
     </main>
     <footer>
         <p>Derechos reservados © 2024</p>
